@@ -1,28 +1,16 @@
-/* WorldMaker by Kroudar, Fall97, mlkesl@stthomas.edu */
+/* inspired by -- WorldMaker by Kroudar, Fall97, mlkesl@stthomas.edu */
+/* random posts on stackexchange regarding random number generation in c */
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #define ROWS 60
 #define COL 200
-//#define RND_NAMES 3
-
-/*void shuffle(int *array, int n, int num_shuffles) {
-  srand((unsigned)time(NULL));
-  for (int j = 0; j < num_shuffles; j++) {
-    for (int i = 0; i < n - 1; i++) {
-      size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
-      int t = array[j];
-      array[j] = array[i];
-      array[i] = t;
-    }
-  }
-}*/
 
 void main()
 {
   int WIDTH=100;
-  int HEIGHT=20;
+  int HEIGHT=100;
   int VNUM_START=20001; /* must NOT be zero */
   int VNUM_END=WIDTH*HEIGHT+(VNUM_START-1);
   int vnum,n,e,s,w,line_pos;
@@ -33,8 +21,6 @@ void main()
   char live[ROWS][COL] = {"9405","3011","2800","5333","5007","8906","8905"};
   int i, num;
   time_t t;
-   
-   //n = 5;
    
    /* Intializes random number generator */
    srand((unsigned) time(&t));
@@ -106,10 +92,7 @@ if ( (vnum-VNUM_START+1)%(WIDTH)==1 ) {
   }
 fprintf(fp,"#0\n");
 fprintf(fp,"\n\n#MOBILES\n");
-fprintf(fp,"#20001\nguardian beast~\nthe guardian beast~\nA guardian beast stares at you and snarls in rage.{x\n~\nJet black fur covers this beast. You stare at his two huge red eyes. You can\ncount at least 50 teeth on this monster. You can't tell whether it is blood or\nsaliva dripping from the beast's jaw. The guardian beast snarls again.\n~\nanimal~\nBCFG DPQ -200 S\n7 0 2d8+79 1d1+150 2d4+1 26\n5 5 5 7\nEFNU 0 0 0\n8 8 1 140\n0 0 M 0\n");
-fprintf(fp,"#20002\nguardian beast~\nthe guardian beast~\nA guardian beast stares at you and snarls in rage.{x\n~\nJet black fur covers this beast. You stare at his two huge red eyes. You can\ncount at least 50 teeth on this monster. You can't tell whether it is blood or\nsaliva dripping from the beast's jaw. The guardian beast snarls again.\n~\nanimal~\nBCFG DPQ -200 S\n3 0 1d9+31 1d1+152 1d6+1 10\n5 5 5 7\nEFNU 0 0 0\n8 8 1 140\n0 0 M 0\n");
-fprintf(fp,"#20003\ncityguard guard~\nthe cityguard~\nA cityguard stands here.\n~\nA big, strong, helpful, trustworthy guard.\n~\nhuman~\nCGT 0 1000 S\n15 3 15d15+160 1d1+149 2d4+4 17\n0 0 0 8\nCDEKLTU 0 C 0\n8 8 1 150\n0 0 M 0\nX sound 20 The cityguard says 'Move along...move along.'~\n");
-fprintf(fp,"\n#0\n\n#RESETS\nM 0 20001  2 20001 100\n\nM 0 20002  2 20030 100\nM 0 20003  2 20100 100\nM 0 3011  2 20100 100\n\nS\n\n#SPECIALS\nM  20001 spec_guard\nM  20002 spec_guard\nM  20003 spec_guard\nS\n#$\n");
+fprintf(fp,"\n#0\n\n#RESETS\n\n\nS\n\n#SPECIALS\nS\n#$\n");
 return;
 }
  
