@@ -26,7 +26,7 @@ void main()
    srand((unsigned) time(&t));
 
 
-  FILE *fp=fopen("newworld.are","w");
+  FILE *fp=fopen("mystery.are","w");
 
   printf("#*********************************#\n\r");
   printf("# GENERATING %3d BY %3d AREA FILE #\n\r",WIDTH,HEIGHT );
@@ -35,7 +35,7 @@ void main()
   fprintf(fp,
 "\
 #AREA\n\r\
-newworld.are~\n\r\
+mystery.are~\n\r\
 Name Mystery~\n\r\
 {1} Seamer       SFB~\n\r\
 %d %d\n\r\
