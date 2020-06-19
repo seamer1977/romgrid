@@ -1,0 +1,2425 @@
+This is an Area Building Help file for MadROM.
+If you want to build for other Rom or Merc 2.1 based muds, get the
+original 'ozy.doc' also at http://www.interlog.com/~sofa
+Enjoy - Ozy.
+--------------------------------------------------------------
+* compiled/written by: Ozymandias
+* edited from the original ozy.doc for MadROM area writers by Etaine
+
+* MadROM muds at: telnet mad.rom.org 1536
+ 
+This file contains material and information from the Merc release
+2.1 Area help files (done by Furey, Hatchet, and Kahn), material
+from the Merc Diku Mud code itself, material and examples from
+various area files that are found in both ROM2 and MadROM, as well
+as coding material that was adapted and modified by Alander for
+ROM2, and later by Madman, Etaine, Zump, Soapbox, Faramir and Neuromancer 
+and Amiga for MadROM.
+ 
+=== Overview of Areas
+ 
+An area is one place of the world.  Each are is defined in a
+separate file.  When naming your area FILE, common format is 
+'areaname.are'.
+ 
+An area is a collection of sections:
+#AREA, #HELPS, #MOBILES, #OBJECTS, #ROOMS, #RESETS, #SHOPS,
+#SPECIALS, #$. The minimum an area needs is the #AREA and #$ section.
+All other sections are optional, though your area would be pretty boring 
+with no rooms, objects or mobiles.  If you *do* choose to have no rooms,
+and/or mobiles or objects or resets in your area, put the header and end of 
+section flag in anyway..eg #OBJECTS
+                           #0
+If you choose to have no shops or specials in your area, you can skip putting
+in those sections completely.
+
+Vnums:
+Individual MOBILES, OBJECTS and ROOMS are identified by their own
+Vnum. A vnum is just a number specific to that mobile, object or room.
+The numbers should be consecutive within each #MOBILE, #OBJECT and #ROOMS
+section. No mobile should have the same vnum as any other, but a room, 
+object, and monster may each have the same vnum.
+When sending in your area, vnum number like this:
+
+#MOBILES
+#ZX001, #ZX002, #ZX003...etc
+
+#OBJECTS
+#ZX001, #ZX002, #ZX003...etc
+
+#ROOMS
+#ZX001, #ZX002, #ZX003..etc
+
+                  ******************************* 
+
+And here we go, with info on the sections in the order they should appear
+in your area file:
+
+I. The #AREA section.  This MUST be included in the file.
+This is the easiest section to do.  The format is as follows:
+ 
+#AREA  {30 60}  <Author>   <Area Name>~
+ 
+Here's an example from an area already designed:
+ 
+#AREA     {30 60}   Ozymandias     Hades~
+ 
+The first two numbers are the recommended level range of the area.
+The first name is your own name or alias and the last phrase is the name 
+of the area itself.
+ 
+ 
+II. The #HELPS section. (optional, you can skip this section)
+ 
+This section is rarely used.  It is simply for placing keywords and
+a help section about your area for players/immortals to read and to
+get help about your area or its format.  However, it is really only
+necessary if you feel there may be some complications in your area.
+If you desire to use a #HELPS section, its format is:
+ 
+#HELPS
+ 
+<level number> <keywords>~
+<help text>
+~
+0 $
+ 
+The level number is the minimum level a player must be to read the 
+helps.  The 'key-words' are a set of keywords for this help text.  The 
+'help-text' is the help text itself.
+ 
+Example:
+
+51 Ozy Awoo~
+Hi this is the help text for Ozy Awoo area. If you are level 51 and 
+higher and you type 'help ozy' or 'help awoo' on the mud, you'd be 
+reading this right now!
+~
+0 $
+ 
+
+III.  The #MOBILES section (optional, but the area may be boring with
+                             no mobiles)
+
+Example:
+ 
+#MOBILES
+#ZX001
+prisoner amazon~
+an amazon prisoner~
+An amazon prisoner rests here in shackles.
+~
+You see a tall, beautiful female warrior in glittering armor.
+~
+human~
+BT Na 850 S
+35 3 1d1+749 1d1+297 12d4+10 5
+-5 -5 -5 0
+EDFHIKLNU 0 0 0
+8 8 2 0
+0 0 M 0
+X sound 30 An amazon prisoner screams in fear!~ 
+X tribe Dance~
+#ZX002 <----- Vnum for next mobile, and so on...
+ 
+Explanation of each line:
+ 
+#MOBILES  <--- the beginning of the mobile section.
+#22001    <--- <mobile-vnum that is unique to this mobile>
+prisoner amazon~    <--- <the keywords for the mobile>
+an amazon prisoner~ <--- <the short description; 2-5 words>
+An amazon prisoner rests here in shackles. <--- <the long desc; 1 line max>
+~  <--- put the tilde for the long desc. on the next line
+You see a tall, beautiful female in glittering armor.
+~  <--- the extended description, with tilde on next line.
+human~  <-- the race of the monster
+BT Na 850 S <--- is the: <ACT FLAGS> <Affected_by> <Align.> <S>
+          (Note: ALWAYS end this above line with a capital 'S'
+          after the alignment number, as is shown here, for code reasons)
+35 3 1d1+749 1d1+297 12d4+10 5 <--- this contains the following:
+          <level of mobile> <plus hitroll> <hit points> <mana>
+          <damage> <DAMAGE TYPE, for when not using a weapon>
+          Please see mobstats.doc for all values in this line except
+          DAMAGE TYPE, of which you can choose any you want, from the
+          table a bit further down.
+-5 -5 -5 0  <--- Armor Class (AC) values for <piercing> <bashing>
+          <slashing> <magic>.  Please see mobstats.doc for all values
+           on this line.
+EDFHIKLNU 0 0 0  <--- <Off_bits> <immunities> <resistances> <vulnerabilities>
+           A list of the Off_bits, and the immunities, resistances and 
+           vulnerabilities is at the end of this section, as well as a
+           list of affected_by and ACT_flags.  If you want to put no values
+           in a section, for example none in resistances, as on this line,
+           just put in a '0'.
+8 8 2 0  <----<position number> <position number><sex of the mobile> <gold>
+         The position numbers most commonly used are the 8 8 combination, 
+         which means the mobile is normally standing.  The first position 
+         number is the position the monster resets in, the second is the 
+         position the monster will return to after fighting.  A list of all
+         position numbers is below. Sex: 0 = neutral, 1 = male, 2 = female
+         Gold is the amount of gold the monster starts with.
+0 0 M 0  <--- The first two, and the last numbers are always 0 0, as they 
+         represent body parts the monster drops when it dies, which the 
+         code now automatically takes care of.  The third field is the SIZE 
+         of the monster (M = medium as shown, T=Tiny, S=Small, L=Large, 
+         H=huge G=giant)
+X sound 30 An amazon prisoner screams in fear!~ <- Mob Sounds line
+          (see MobSounds.txt for how to add these in..its easy)
+X tribe Druid~ <- flags a mob as a member of a Tribe.  Must be an
+        existing Tribe, and must use the Tribe abbrev for the Tribe word.
+
+(the last two lines, starting with 'X' are optional)
+
+
+Note:
+- 'Keywords' are the names of the mobile. Choose 1-3 of these.
+
+- 'Short description' is what you see if the mobile moves or acts: eg 
+The <short description> attacks you! The <short desription> has arrived, 
+etc etc.  This should be 1-5 words long.
+
+- 'Long description' is the description of the mobile you see when you 
+type 'look' in the same room that it is in. eg. A <long description of 
+mobile> is standing here. Should be no longer than one line.
+
+- 'Extended description' is what you see when you type 'look 
+<mobilename>' and you look AT the monster.  May be 1-10 lines long.
+
+- Line length...keep your line length to a maximum of 74 characters per 
+line, including spaces and punctuation.
+                       *******
+
+- Act_flags define how the mobile acts as in act_sentinel (stay in one spot)
+- Affected_by flags indicate what spells or other things the mobile is 
+affected by as in aff_poison (affected by poision rotting his brain ahah!)
+This means the MOBILE is poisoned, and NOT that he casts poison.
+- Alignment of a mobile can range from -1000 to 1000.  -1000 is very evil
+and 1000 is the purest good.
+- Level of a monster can be from 1-105 on MadROM
+ 
+IMPORTANT: Consult mobstats.doc at :
+http://www.interlog.com/~sofa/text/docs/doc.html to find out the values
+you should put in for +hitroll, dam, hitpoins, mana, and AC for your 
+monsters.
+
+-- TABLES and tables and tables of flags for your Monsters -- 
+ 
+Now here are the listings of all the necessary values for making
+your mobiles; the flags will be on the left, and the letter or
+number values you use are on the right column. Please note: if there
+is a n/a beside the flag, it means we have the flag in the code, but have
+not yet written any code to make it DO anything...the information is 
+there for you, but don't use any flag that has n/a beside it.
+ 
+=== ACT FLAGS:
+ 
+ACT_IS_NPC     (A)  <-- Auto set for mobs: do NOT use
+ACT_SENTINEL   (B)  <-- stays in one room
+ACT_SCAVENGER  (C)  <-- picks up objects
+ACT_AGGRESSIVE (F)  <-- attacks PC's
+ACT_STAY_AREA  (G)  <-- Won't leave area
+ 
+ACT_WIMPY      (H)  <-- will flee if hp gets too low
+ACT_PET        (I)  <-- Auto set for pets: do NOT use
+ACT_TRAIN      (J)  <-- can train PC's
+ACT_PRACTICE   (K)  <-- can practice PC's
+ACT_UNDEAD     (O)  n/a
+ 
+ACT_CLERIC     (Q)  n/a
+ACT_MAGE       (R)  n/a
+ACT_THIEF      (S)  n/a
+ACT_WARRIOR    (T)  n/a
+ACT_NOALIGN    (U)  n/a
+
+ACT_NOPURGE    (V)  <-- will not be purged by purge command
+ACT_IS_HEALER  (a) <-- acts as a healer
+ACT_GAIN       (b) <-- PC's can use 'gain' command at this mobile
+ACT_UPDATE_ALWAYS   (c)  (Don't use, see Etaine if you want info on this one)
+ 
+ 
+=== RACES:
+ 
+Here are some common races;  Race affects what parts the mobile 
+will have and some of the affected_by things it may have, just like 
+the races for players. 
+ 
+human
+dragon
+elf
+dwarf
+orc
+giant
+unique
+ 
+For other options, see Etaine.
+ 
+=== Mobile Size:
+ 
+T = tiny
+S = small
+M = medium
+L = large
+H = huge
+G = giant
+ 
+=== Affected_by FLAGS:
+If you flag a monster with any of these, it means he is AFFECTED by the flag
+permanently.  For example, if the monster is flagged aff_poison, he is 
+poisoned.  (it does NOT mean he can cast poison, rather HE is poisoned)
+ 
+AFF_BLIND           (A)   
+AFF_INVISIBLE       (B)   invisble to all players under his level
+AFF_DETECT_EVIL     (C)   
+AFF_DETECT_INVIS    (D)   monster can detect invisible players under his level
+AFF_DETECT_MAGIC    (E)  
+ 
+AFF_DETECT_HIDDEN   (F)  monster can detect hiding players under his level
+AFF_SANCTUARY       (H)  
+AFF_FAERIE_FIRE     (I)  
+AFF_INFRARED        (J)  monster can see players in dark rooms and/or at night
+AFF_CURSE           (K)  
+ 
+AFF_POISON          (M)  
+AFF_PROTECT         (N)  
+AFF_SNEAK           (P) 
+AFF_HIDE            (Q)  
+AFF_SLEEP           (R)  
+ 
+AFF_CHARM           (S)  
+AFF_FLYING          (T)
+AFF_PASS_DOOR       (U)
+AFF_HASTE           (V)
+AFF_CALM            (W)
+ 
+AFF_PLAGUE          (X)
+AFF_WEAKEN          (Y)
+AFF_DARK_VISION     (Z)   n/a
+AFF_BERSERK         (a)   
+AFF_SWIM            (b)
+AFF_REGENERATION    (c)
+
+
+=== OFF_BITS:
+These are the monsters OFFENSE flags..they determine which offense he 
+will use when he fights.  eg, if a monster is flagged off_backstab, he 
+will try to backstab when he fights. 
+
+OFF_AREA_ATTACK     (A)  monster attacks all in area
+OFF_BACKSTAB        (B)  must be carrying a weapon
+OFF_BASH            (C)
+OFF_BERSERK         (D)
+OFF_DISARM          (E)
+ 
+OFF_DODGE           (F)
+OFF_FADE            (G)
+OFF_FAST            (H)  n/a
+OFF_KICK            (I)
+OFF_KICK_DIRT       (J)
+ 
+OFF_PARRY           (K)
+OFF_RESCUE          (L)
+OFF_TAIL            (M)  n/a
+OFF_TRIP            (N)  n/a
+OFF_CRUSH           (O)  n/a
+ 
+ASSIST_ALL          (P)   he will assist any who was the victim of an attack
+ASSIST_ALIGN        (Q)   will assist those in a fight who are the same align
+                          as he is
+ASSIST_RACE         (R)   ditto, but same race as he is
+ASSIST_PLAYERS      (S)   will assist players who are fighting monsters
+ASSIST_GUARD        (T)   will assist cityguards
+ASSIST_VNUM         (U)   will assist all monsters of the same vnum as him
+ 
+ 
+=== IMMUNITIES - IMM bits for mobiles:
+These flags make the monster Immune to certain things. eg. if a monster 
+is flagged imm_acid, the acid blast spell cast against him will not hurt him.
+ 
+IMM_SUMMON     (A)
+IMM_CHARM      (B)
+IMM_MAGIC      (C)
+IMM_WEAPON     (D)
+IMM_BASH       (E)
+ 
+IMM_PIERCE     (F)
+IMM_SLASH      (G)
+IMM_FIRE       (H)
+IMM_COLD       (I)
+IMM_LIGHTNING  (J)  (chain lighting)
+ 
+IMM_ACID       (K)  (acid blast)
+IMM_POISON     (L)
+IMM_NEGATIVE   (M)  n/a
+IMM_HOLY       (N)  (holy light)
+IMM_ENERGY     (O)   n/a
+ 
+IMM_MENTAL     (P)   n/a
+IMM_DISEASE    (Q)   (immune to plague)
+IMM_DROWNING   (R)   n/a
+IMM_LIGHT      (S)   n/a
+IMM_BLIND      (T)
+ 
+ 
+=== RESISTANCES - RES bits for mobiles:
+Thse flags make the monster resistant, but not totally immune to whatever 
+you flag him with...he can still be hurt by it, but not as easily as if 
+he was not flagged resistant to it.
+ 
+RES_CHARM      (B)
+RES_MAGIC      (C)
+RES_WEAPON     (D)
+RES_BASH       (E)
+RES_PIERCE     (F)
+ 
+RES_SLASH      (G)
+RES_FIRE       (H)
+RES_COLD       (I)
+RES_LIGHTNING  (J)  (chain lighting)
+RES_ACID       (K)
+ 
+RES_POISON     (L)
+RES_NEGATIVE   (M)  n/a
+RES_HOLY       (N)  (holy word)
+RES_ENERGY     (O)  n/a
+RES_MENTAL     (P)  n/a
+ 
+RES_DISEASE    (Q)
+RES_DROWNING   (R)  n/a
+RES_LIGHT      (S)
+ 
+=== VULNERABILITIES - VULN bits for mobiles:
+These flags make the monster vulnerable. eg if you flag a monster 
+vulnerable to bash, and a player bashes him, he will be hurt much more by 
+the bash then if he was not vulnerable to it. 
+
+VULN_MAGIC     (C)
+VULN_WEAPON    (D)
+VULN_BASH      (E)
+VULN_PIERCE    (F)
+VULN_SLASH     (G)
+ 
+VULN_FIRE      (H)
+VULN_COLD      (I)
+VULN_LIGHTNING (J)  (chain lighting)
+VULN_ACID      (K)  (acid blast)
+VULN_POISON    (L)
+ 
+VULN_NEGATIVE  (M)  n/a
+VULN_HOLY      (N)  (holy word)
+VULN_ENERGY    (O)  n/a
+VULN_MENTAL    (P)  n/a
+VULN_DISEASE   (Q)
+ 
+VULN_DROWNING  (R)  n/a
+VULN_LIGHT     (S)  n/a
+VULN_WOOD      (X)  (wooden weapons)
+VULN_SILVER    (Y)  (silver weapons)
+VULN_IRON      (Z)  (iron weapons)
+ 
+=== POSITIONS:
+ 
+POS_DEAD       0  <---* do not use
+POS_MORTAL     1  <---* do not use
+POS_INCAP      2  <---* do not use
+POS_STUNNED    3  <---* do not use
+ 
+POS_SLEEPING   4
+POS_RESTING    5
+POS_SITTING    6
+POS_FIGHTING   7  <---* this position also not used.
+POS_STANDING   8
+ 
+=== SEX of mobile:
+ 
+NEUTRAL   0
+MALE      1
+FEMALE    2
+ 
+=== DAMAGE TYPES (these values also used for weapons in #OBJECTS):
+These are the words you will see when the monster hits you...eg 'The big 
+monsters's WHIP annhilates you!' if you chose '4' for whip...etc
+ 
+0  - HIT
+1  - SLICE
+2  - STAB
+3  - SLASH
+4  - WHIP
+5  - CLAW
+ 
+6  - BLAST
+7  - POUND
+8  - CRUSH
+9  - GREP
+10 - BITE
+11 - PIERCE
+12 - SUCTION
+13 - BEATING
+14 - DIGESTION
+15 - CHARGE
+16 - SLAP
+17 - PUNCH
+18 - WRATH
+19 - MAGIC
+20 - DIVINE POWER
+21 - CLEAVE
+22 - SCRATCH
+23 - PECK (pierce)
+24 - PECK (bash)
+25 - CHOP
+26 - STING
+27 - SMASH
+28 - SHOCKING BITE
+29 - FLAMING BITE
+30 - FREEZING BITE
+31 - ACIDIC BITE
+32 - CHOMP
+
+ 
+IV. The #OBJECTS section (optional section, but maybe boring with
+                          no objects in your area)
+
+IMPORTANT: please get a copy of objstats.doc at 
+http://www.interlog.com/~sofa/text/docs/doc.html to see what values 
+should be used for each item_type and level (in other words, how powerful 
+can your objects be by level)
+
+The #OBJECTS section is similar to the #MOBILES section.  However,
+the main difference is that the values in the #OBJECTS section
+depend on the TYPE of object being described, i.e., weapon, scroll,
+potion, treasure, etc.  Below I am presenting an example of how an
+object should look in this section:
+ 
+Example:
+ 
+#ZX001
+sword underworld~
+The Sword of the Underworld~
+A large, dark sword of solid obsidian gleams evilly here.~
+adamantite~
+5 ABCEJL AN
+1 11 6 6 DE
+50 30 35000 P
+E
+sword underworld~
+This heavy sword has an evil, dark shine to its metal.  The pommel
+is formed into the shape of a large ram's head and is set with
+several large rubies.
+~
+A
+18 4
+A
+19 4
+A
+1 2
+A
+5 2
+A
+23 -8
+#ZX002  <--- this begins the next object in the #OBJECTS section...
+ 
+Explanation of each line:
+ 
+#22016  <--- this is the vnum unique to this object
+sword underworld~  <--- these are the keywords for the object
+The Sword of the Underworld~  <--- the short description of the object
+A large, dark sword of solid obsidian gleams evilly here.~ <-long description
+adamantite~  <--- the 'material' of the object.  
+          A list of materials for MadROM is provided
+          at the end of the help for #OBJECTS section. Objects
+          made of wood, paper and glass CAN be destroyed by dragon
+          fire, for example.
+5 ABCEJL AN  <--- this line contains: <ITEM TYPE> <flags> <wear flags>
+          A listing of item types, flags and wear flags is
+          provided at the end of the help for #OBJECTS section.
+1 11 6 6 DE  <-- *IMPORTANT* This is the VALUES line, and it varies
+          depending on the 'ITEM TYPE' as declared in the above
+          line.  At the end of this section, following the value
+          tables, is the breakdown of this line for all the other
+          object types.  This example here, therefore, is
+          geared for objects that are weapons, because on the line above
+          '5' was chosen for ITEM TYPE, and '5' is 'weapon'.  In 
+          the example here, this line is as follows:
+<WEAPON CLASS> <# of damage dice> <type of damage dice><damage type> 
+<weapon types>
+          - See the list of damage types given in #OBJECTS
+          - Lists of weapon classes are given a bit below
+          - Lists of weapon types are given a bit below
+50 30 35000 P <--- this line contains:
+    <level of obj.> <weight of object> <value of object> <condition of obj.)
+E  <--- this is if you want extra descriptive keywords (optional)
+sword underworld~  <--- the keywords for the 'E' section.
+This heavy sword has an evil, dark shine to its metal.  The pommel
+is formed into the shape of a large ram's head and is set with
+several large rubies.  <--- the 'extra description'
+~
+A  <--- this is for adding apply bonuses such as +hit or +strength (optional)
+18 4 <--- <apply bonus type> <apply bonus amount>
+      In this example '18' is 'hitroll' and '4' means add +4 to the hitroll
+      List of the apply bonuses flags are a bit below.
+A    <--- another 'A' value, and so on...
+ 
+
+Note:
+The 'E' and 'A' sections are optional.
+=== Common Materials for the 'material' section:
+ 
+- cloth
+- leather
+- pill
+- paper
+- vellum
+- glass
+- wood
+- steel
+- bronze
+- brass
+- iron
+- gold
+- silver
+- adamantite
+- stone
+ 
+=== OBJECT TYPES:
+ 
+ITEM_LIGHT           1
+ITEM_SCROLL          2
+ITEM_WAND            3
+ITEM_STAFF           4
+ITEM_WEAPON          5
+ITEM_TREASURE        8
+ITEM_ARMOR           9
+ITEM_POTION         10
+ITEM_CLOTHING       11 
+ITEM_FURNITURE      12
+ITEM_TRASH          13
+ITEM_CONTAINER      15
+ITEM_DRINK_CON      17  (drink container)
+ITEM_KEY            18
+ITEM_FOOD           19
+ITEM_MONEY          20
+ITEM_BOAT           22
+ITEM_CORPSE_NPC     23
+ITEM_FOUNTAIN       25
+ITEM_PILL           26
+ITEM_MAP            28
+ITEM_SINGING        29  (the jukebox crickets)
+ITEM_PORTAL         30
+ITEM_EXPLOSIVE	    31
+ 
+=== Object FLAGS:
+ 
+ITEM_GLOW           (A)
+ITEM_HUM            (B)
+ITEM_DARK           (C)  n/a
+ITEM_LOCK           (D)  n/a
+ITEM_EVIL           (E)  
+ITEM_INVIS          (F)
+ITEM_MAGIC          (G)  n/a
+ITEM_NODROP         (H)
+ITEM_BLESS          (I)
+ITEM_ANTI_GOOD      (J)
+ITEM_ANTI_EVIL      (K)
+ITEM_ANTI_NEUTRAL   (L)
+ITEM_NOREMOVE       (M)
+ITEM_INVENTORY      (N)
+ITEM_NOPURGE        (O)
+ITEM_ROT_DEATH      (P)  item will rot a few minutes after the mobile
+                         carrying is has died
+ITEM_VIS_DEATH      (Q)   while carried by a monster, the item is not visible
+                          by either locate spell or by the player looking at
+                          the monster, but becomes visible to locate spell
+                          and to look once the monster has died
+ITEM_MELT_DROP      (R)   item dissolved and dissapears when dropped
+ITEM_FLOAT          (S)   containers flagged with this will NOT sink and 
+                          dissapear in water rooms
+ 
+ 
+=== WEAR FLAGS:
+ 
+ITEM_TAKE           (A)  (all items you want to carry must have this flag)
+ITEM_WEAR_FINGER    (B)
+ITEM_WEAR_NECK      (C)
+ITEM_WEAR_BODY      (D)
+ITEM_WEAR_HEAD      (E)
+ITEM_WEAR_LEGS      (F)
+ITEM_WEAR_FEET      (G)
+ITEM_WEAR_HANDS     (H)
+ITEM_WEAR_ARMS      (I)
+ITEM_WEAR_SHIELD    (J)
+ITEM_WEAR_ABOUT     (K)  (worn about body)
+ITEM_WEAR_WAIST     (L)
+ITEM_WEAR_WRIST     (M)
+ITEM_WIELD          (N)
+ITEM_HOLD           (O)
+
+=== CONDITION OF OBJECT:
+
+PERFECT   P
+GOOD      G
+AVERAGE   A
+WORN      W
+DAMAGED   D
+RUINED    R 
+ 
+=== WEAPON CLASS:
+ 
+WEAPON_EXOTIC       0  (any player can use these)
+WEAPON_SWORD        1   (only players with sword skill can use)
+WEAPON_DAGGER       2    (only players with dagger skill can use..
+                          and the same for the rest)
+WEAPON_SPEAR        3
+WEAPON_MACE         4
+WEAPON_AXE          5
+WEAPON_FLAIL        6
+WEAPON_WHIP         7
+WEAPON_POLEARM      8
+ 
+ 
+=== WEAPON TYPES:
+ 
+WEAPON_FLAMING      (A)   n/a
+WEAPON_FROST        (B)   n/a
+WEAPON_VAMPIRIC     (C)   item has venom/poison on it
+WEAPON_SHARP        (D)
+WEAPON_VORPAL       (E)
+WEAPON_TWO_HANDS    (F)   need the weapon and the shield wear slot free 
+                          to use
+ 
+ 
+=== APPLY BONUS TYPES (for the 'A' section of #OBJECTS):
+ 
+APPLY_STRENGTH       1
+APPLY_DEX            2
+APPLY_INT            3
+APPLY_WIS            4
+APPLY_CON            5
+APPLY_SEX            6
+APPLY_CLASS          7   n/a
+APPLY_LEVEL          8   n/a
+APPLY_AGE            9   n/a
+APPLY_HEIGHT        10   n/a
+APPLY_WEIGHT        11   n/a
+APPLY_MANA          12
+APPLY_HIT           13
+APPLY_MOVE          14
+APPLY_GOLD          15
+APPLY_EXP           16   n/a
+APPLY_AC            17
+APPLY_HITROLL       18
+APPLY_DAMROLL       19
+APPLY_SAVING_PARA   20
+APPLY_SAVING_ROD    21
+APPLY_SAVING_PETRI  22
+APPLY_SAVING_BREATH 23
+APPLY_SAVING_SPELL  24
+ 
+ 
+=== Container FLAGS (if OBJECT TYPE is container only):
+ 
+CONT_CLOSEABLE      1
+CONT_PICKPROOF      2
+CONT_CLOSED         4
+CONT_LOCKED         8
+
+== Portal GATE FLAGS
+
+GATE_NORMAL_EXIT    A  enter/exit messages from portal are as if its a door
+GATE_NOCURSE        B  can enter portal even if cursed or in norecall room
+GATE_GOWITH         C   the portal goes with you
+GATE_BUGGY          D   small chance of sending you to a random room
+GATE_RANDOM         E   sends you to a random room on the mud
+GATE_RANDOMAREA     F   sends you to a random room in same area
+
+== PORTAL EXIT FLAGS
+
+EX_ISDOOR          A  when you enter portal it looks like you enter a door
+EX_CLOSED          B
+EX_LOCKED          C
+EX_PICKPROOF       F
+EX_NOPASS          G   passproof
+
+ 
+=== Liquid values for DRINK CONTAINERS (value2 on the value line):
+ 
+LIQ_WATER                 0
+LIQ_BEER                  1
+LIQ_RED_WINE              2
+LIQ_ALE                   3
+LIQ_DARK_ALE              4
+LIQ_WHISKEY               5
+LIQ_LEMONADE              6
+LIQ_FIREBREATHER          7
+LIQ_LOCAL_SPECIALTY       8
+LIQ_SLIME_MOLD_JUICE      9
+LIQ_MILK                 10
+LIQ_TEA                  11
+LIQ_COFFEE               12
+LIQ_BLOOD                13
+LIQ_SALT_WATER           14
+LIQ_COLA                 15
+LIQ_ROOT_BEER            16
+LIQ_ELVISH_WINE          17
+LIQ_WHITE_WINE           18
+LIQ_CHAMPAGNE            19
+LIQ_MEAD                 20
+LIQ_ROSE_WINE            21
+LIQ_BENEDICTINE_WINE     22
+LIQ_VODKA                23
+LIQ_CRANBERRY_JUICE      24
+LIQ_ORANGE_JUICE         25
+LIQ_ABSINTHE             26
+LIQ_BRANDY               27
+LIQ_AQAVIT               28
+LIQ_SCHNAPPS             29
+LIQ_ICEWINE              30
+LIQ_AMONTILLADO          31
+LIQ_SHERRY               32
+LIQ_FRAMBOISE            33
+LIQ_RUM                  34
+LIQ_CORDIAL              35
+
+ *Cheers* to Satin, of Tesseract, who brewed up the last 20 liquid types,
+above.
+
+
+Value lines for all the various OBJECT TYPES follow:
+ 
+format -
+<value0>  <value1>  <value2>  <value3>  <value4>
+ 
+**note: if a value is shown to be 'unused', place a zero, '0', for
+that value.  DO NOT skip it or leave it blank.
+ 
+ITEM_PORTAL:
+   <to_room> <gate flags> <exit flags> <# of charges> <key vnum if locked>
+
+ITEM_LIGHT:
+<unused> <unused> <HOURS OF LGT. AVAILABLE  <unused> <unused>
+                       0=dead, 999=infinite 
+ 
+ITEM_EXPLOSIVE:
+<spell lvl> <sn1> <sn2> <sn3> <unused>
+
+ITEM_SCROLL:
+<spell lvl> <sn1> <sn2> <sn3> <unused>
+ 
+**note:  Potions, pills and scrolls can have up to 3 spells in them.  If you
+use only 1 or 2, put a zero for each of the unused values. Try to use all 
+3 slots though, it makes the pill more interesting :)
+ 
+**note: spell lvl is the level at which the spell will be cast, NOT
+the level of the reader of the scroll.
+ 
+**note: 'sn' stands for SLOT NUMBER; this is the spell number; please 
+get a copy of spell.txt at:
+http://www.interlog.com/~sofa/text/docs/doc.html to find out what 
+number to use to indicate each spell.
+
+ITEM_WAND:
+<spell lvl> <maximum charges> <current charges> <sn> <unused>
+ 
+ITEM_STAFF:
+<spell lvl> <max charges> <current charges> <sn> <unused>
+ 
+ITEM_WEAPON:
+<weapon class> <# damage dice> <type of damage dice> <damage type>
+<weapon types>
+
+- note: to figure out how to deal with the #damage dice and type of 
+damage dice slots, please read :
+http://www.interlog.com/~sofa/text/docs/objstats.doc
+ 
+ITEM_TREASURE:
+<unused> <unused> <unused> <unused> <unused>
+ 
+ITEM_ARMOR:
+<value for pierce> <value for bash> <value for slash> <value for
+magic> <unused>
+ 
+ITEM_POTION:
+<spell lvl> <sn1> <sn2> <sn3> <unused> 
+ 
+**note:  Potions, pills and scrolls can have up to 3 spells in them.  If you
+use only 1 or 2, put a zero for each of the unused values. Try to use all 
+3 slots though, it makes the pill more interesting :)
+ 
+ITEM_PILL:
+<spell lvl> <sn1> <sn2> <sn3> <unused>
+ 
+**note:  Potions and pills can have up to 3 spells in them.  If you
+use only 1 or 2, put a zero for each of the unused values.
+ 
+ITEM_FURNITURE:
+<unused> <unused> <unused> <unused> <unused>
+ 
+**note: the benches in Southern Midgaard are an example of a
+furniture object... they basically just sit there.
+ 
+ITEM_TRASH:
+<unused> <unused> <unused> <unused> <unused>
+
+ITEM_SINGING  (jukebox/crickets)
+< -1 > < -1 > < -1 > < -1 > < -1 > 
+
+ITEM_CONTAINER:
+<wgt. capacity> <container FLAGS> <key vnum> <unused> <unused>
+ 
+**note: Use the Container FLAGS listed earlier for this value; the
+key vnum is ONLY USED if there is a key to unlock the container -
+otherwise put a zero for that value.
+ 
+ITEM_DRINK_CONTAINER:
+<liquid capacity> <current quantity> <liquid #> <0 <---note: if
+this value is a NON-ZERO number, the drink is poisoned> <unused>
+ 
+ITEM_KEY:
+< timer > <unused> <unused> <unused> <unused>
+
+nb: the timer value is # of ticks till the key rots, and 1 tick = 30 real
+seconds
+
+- if the timer = 0 the player can hold the key till he logs off
+
+- if the timer number is LESS than 0 the timer STARTS ticking when the
+key is first used to either lock or unlock a door, portal or container and
+then counts up to 0, at which point the key rots
+
+- if the timer number is MORE than 0 the timer STARTS ticking when the
+monster holding the key (if a monster is holding it) is killed, and the
+timer then counts down to 0, at which point the key rots
+
+nb: the rot_death flag can also still be used on keys, and if used will
+make the key start rotting on the death of the monster holding the key.
+The timer for keys flagged with rot_death is 5-10 seconds.  If both the
+rot_death flag is set and the timer in value0 above is also set to a
+negative number, the rot_death flag will take precendence IF the player
+needs to obtain the key by killing a monster (thus starting the rot_death
+timer) ; however, if the player finds the key on the ground, then the
+rot_use timer would take precedence when they first use the key.
+
+ITEM_FOOD:
+<hours of food value> <unused> <unused> <unused> <unused>
+                         * note if this ^^^^^^^ value is 1, food is poison. 
+ITEM_MONEY:
+<value in gold> <unused> <unused> <unused> <unused>
+ 
+ITEM_BOAT:
+<unused> <unused> <unused> <unused> <unused>
+ 
+ITEM_FOUNTAIN:
+<unused> <unused> <liquid type> <unused> <unused>
+ 
+ITEM_MAP:
+< 1 > <unused> <unused> <unused> <unused>
+ 
+ 
+V. The #ROOMS section (optional, but if your area really has no rooms
+       it would be BORING, no question)
+
+Example:
+
+#ZX001
+Rock Carving~
+     You scramble through this mountain pass, the frightening stony
+walls reaching to the sky on either side of you.  A powerful, eerie
+wind whips the air into a frenzy about you.  Cut into the rock face
+is an imposing, monolithic statue of a long forgotten king.  You
+feel a sudden sense of uneasiness as you pass beneath his
+glowering, silent gaze.  Ahead, to the north, an immense set of
+iron gates block further passage.  The pass leads north beyond the
+gates, and back to the south.
+~
+ZX 0 5
+D0
+A pass through tall iron gates.
+~
+gate~
+1 ZX002 ZX003
+D2
+A pass through the mountains.
+~
+~
+0 -1 ZX004
+E
+statue~
+This impressive statue is a depiction of the ancient king, and now
+awesomely powerful God, Ozymandias.  Bold of gaze and fierce of
+stature, this being is one you'd NOT like to cross if you ran into
+him.  Brrr!
+~
+S
+#ZX002
+ 
+Explanation of each line:
+ 
+#ZX001  <--- <room vnum>
+Rock Carving~  <--- <room name>
+     You scramble through this mountain pass, the frightening stony
+walls reaching to the sky on either side of you.  A powerful, eerie
+wind whips the air into a frenzy about you.  Cut into the rock face
+is an imposing, monolithic statue of a long forgotten king.  You
+feel a sudden sense of uneasiness as you pass beneath his
+glowering, silent gaze.  Ahead, to the north, an immense set of
+iron gates block further passage.  The pass leads north beyond the
+gates, and back to the south.
+~  <--- <above, room description, followed by the tilde here>
+ZX 0 5  <--- <area number> <room-flags> <sector-type> 
+D0      <--- <door-number>
+A pass through tall, iron gates. 
+~  <--- <exit description>  tilde goes on next line, as here.
+gate~  <--- <door (if there is one) keyword>
+1 ZX002 ZX003  <--- <door state> <key object vnum> <to_room-number>
+D2     <--- <next door number, and so on...>
+A pass through the mountains. <--- <next exit desc...>
+~
+~
+0 -1 ZX004  <--- <next lock-num.> <next key-num.> <next to_room-num.>
+E   <--- <extended description section> (optional)
+statue~ <--- <extended desc. keywords>
+This impressive statue is a depiction of the ancient king, and now
+awesomely powerful God, Ozymandias.  Bold of gaze and fierce of
+stature, this being is one you'd NOT like to cross if you ran into
+him.  Brrr!  <--- <the extended description itself>
+~
+E <------ <next extended description> (optional)
+etaine sign~ <---- <extended description keyword>
+Ozymandias worships Etaine, or will till he sees how she's been messing 
+in his document. <--- <extended description itself>
+~
+S  <--- the 'S' marks the end of the room. It is NOT optional.
+#ZX002  <--- <next room vnum, and so on...>
+
+Note: for Extended descriptions, EACH object/description must start with 
+an E.  eg if your room has a sign, chair and plaque, each extended 
+description for these should start with its own individual E., just like 
+the example above. :) 
+
+- The 'area number' is the first 2 digits of the area's vnum range.
+- The 'room vnum' is the virtual number of the room.
+- The 'room name' is the name of the room.
+- The 'room description' is the long multi-line description of the
+room.
+ 
+- A list of ROOM FLAGS is given a bit below.
+- A list of SECTOR TYPES is given a bit below.  This affects movement
+  cost walking through a room.  For example it costs more movement to walk
+  through a room flagged mountain than through a field...
+
+- Doors 'D' section and Extended descriptions the 'E' section are optional.
+  Doors can be numbered 1-5. A list of door exits are a bit below.
+- The 'door state' indicates if there is a door, if its closed or locked
+  pickproof or passproof or both, etc.
+- IF there is a door, and its locked, the 'key object vnum' is the vnum of
+   the key that will unlock it.  Please note, if you don't actually MAKE
+   a key object with this vnum the door will have no key to unlock it. You
+   may choose to have a locked door with no key..if you do, put '-1' in
+   that spot.
+
+- Unless you want a one-way exit, you must specify two 'D' sections,
+one for each side of the door;  i.e., one leaving one room and one
+in the other room the door goes to.  Otherwise, you will end up
+with a one-way exit.
+ 
+- The 'S' at the end marks the end of the room.  IT IS NOT OPTIONAL.
+
+- At the very end of your full #ROOMS section put a  #0 to end it off.
+   Do this at the very end of the #MOBILES and #OBJECTS section too. (ya 
+   ya I shoulda told you about this up top, but ahahhah!)
+
+=== Direction Values for the 'D' section:
+ 
+NORTH     0
+EAST      1
+SOUTH     2
+WEST      3
+UP        4
+DOWN      5
+ 
+(eg D0 = a door or non door exit that allows you to go north)
+ 
+== Door state values for the 'D' section:
+ 
+Unhindered exit         0
+Door with no keyhole   -1
+Normal door             1  
+Pick-proof door         2
+Pass proof door         3
+Pick and passproof door 4
+
+note: a 'hidden' exit that doesn't show in when players type 'exit' is 
+made by flagging your exit to be a door or flag 1.
+ 
+=== ROOM-FLAGS:
+ 
+ROOM_DARK           (A)  (room is dark if you are not holding a light)
+ROOM_NO_SUMMIN      (B)   (can't summon anything into this room)
+ROOM_NO_MOB         (C)    (monsters won't wander in)
+ROOM_INDOORS        (D)     (room will be dark unless you carry light)
+ROOM_NO_SUMMOUT     (E)    (can't summon anything OUT of this room)
+ROOM_PRIVATE        (J)     (2 players or monsters only)
+ROOM_SAFE           (K)      (can't attack monsters in this room)
+ROOM_SOLITARY       (L)     (1 player or monster room)
+ROOM_PET_SHOP       (M)   
+ROOM_NO_RECALL      (N)
+ROOM_IMP_ONLY       (O)       (ya!)
+ROOM_GODS_ONLY      (P)
+ROOM_HEROES_ONLY    (Q)       (level 91+ can get in here only)
+ROOM_NEWBIES_ONLY   (R)
+ROOM_LAW            (S)       (no charming monsters here)
+ 
+ 
+=== SECTOR-TYPES:
+ 
+SECT_INSIDE          0       (in order 0 -> 5, cost more movement points)
+SECT_CITY            1
+SECT_FIELD           2
+SECT_FOREST          3
+SECT_HILLS           4
+SECT_MOUNTAIN        5
+SECT_WATER_SWIM      6        (you have to fly or have a boat to get past)
+SECT_WATER_NOSWIM    7         (its watery, but you can walk in it)
+SECT_AIR             9        (need to fly over this room)
+SECT_DESERT         10
+SECT_MAX            11    n/a
+ 
+ 
+VI. The #RESETS section: (optional, but if you have rooms or objects
+                    you want to reset, better write this section)
+ 
+This is the section that installs all the mobiles in their various
+locations, equips the mobiles, locks and closes any necessary
+doors, randomizes any random room exits, and generally sets up the
+area and populates it.
+ 
+The #RESETS section contains a series of single lines.
+ 
+The reset commands are:
+ 
+*    comment
+M    read a mobile
+O    read an object
+P    put an object in an object (gold in a safe, etc.)
+G    give an object to mobile
+E    equip object to mobile
+D    set state of door
+R    randomize room exits
+S    stop (END OF #RESETS LIST)
+ 
+Here is the format for the various reset commands:
+ 
+M <unused> <mobile-vnum> <limit-number> <room-vnum>
+ 
+For the 'unused' value, simply put a '0'.  The mobile-vnum is the
+vnum of the mobile loaded.  The limit-number is the limit of how
+many of this mobile may be present in the world.  The last number,
+the room-vnum, is the vnum of the room where the mobile is loaded.
+ 
+ 
+O <unused> <object-vnum> <limit number> <room-vnum>
+ 
+For the 'unused' value, simply put a '0'.  The object-vnum is the
+vnum of the object loaded.  If you want more than one of these objects
+loaded into the room at one time, make it load twice by putting it twice
+in resets (or more).  The last number, the room-vnum, is the vnum of the 
+room where the object is loaded.
+ 
+ 
+P <unused> <object-vnum> <limit number> <in_object-vnum>
+ 
+The number is the number (amount) of the first object that is
+placed into another object (i.e., a desk, coffer, safe, etc.).  The
+object-vnum is the vnum of the object loaded.  To make more than one
+of the same item load into a container, load it twice (or more) in 
+the resets.  The limit-number is the limit of how many of these objects 
+may be present in the world, or 'put' into the other object.  The game 
+will load a coffer, for example, a certain amount of times.  After that, 
+the coffer will always be empty, until another reboot. The last number, 
+the 'in_object-vnum', is the vnum of the object into which the other
+object is placed, i.e., the actual container (safe, desk, etc.).
+ 
+ 
+G <number> <object-vnum> <limit-number>
+ 
+For the 'G' command, there is no fourth number.  Only use three
+numbers.  The 'G' command MUST follow an 'M' command, as it 'gives'
+the object to the whatever mobile in a 'M' command is above it.
+Note the reason for this is due to the fact that no mobile-vnum is
+listed in the 'G' command.  The first number is the number (amount)
+of this particular object to be given to the mobile.  The object-
+vnum is the vnum of the object given.  The limit-number is the
+amount of times this object will be 'given' to the mobile.  I.E.,
+the Calico cat from the Mage Tower area of ROM2 (and other muds as
+well...) has a spiked collar that is only loaded on the cat at the
+start of the game, at a reboot.  After that, the cat has no collar,
+until another reboot.  It is often a good idea to limit the number
+of objects in this manner to be given or equipped on a mobile,
+unless the object is relatively low level. If you wish one item to be 
+given to the mob per AREA RESET, make the limit number a -1.
+If you are Giving items to a shopkeeper, make the (limit number) -1. 
+ 
+E <number> <object-vnum> <limit-number> <wear_loc-number>
+ 
+The first number is the number (amount) of an object equipped on
+the mobile.  The object-vnum is just that.  The limit number is the
+same as in the 'G' command (see above).  The 'wear_loc-number' is
+the wear location that the object is equipped on the mobile's body.
+A listing of the wear_loc values is given at the end of this
+#RESETS help section.
+ 
+ 
+D <unused> <room-vnum> <door-number> <state-number>
+ 
+For the 'unused' value, simply put a '0'.  The room-vnum is the
+vnum of the room that the door IS IN.  The door-number is just
+that; i.e., 0=north, 1=west, 2=south, etc. (see the help section
+for #ROOMS, above).  The last number, the 'state-number', is the
+"state" of the door (whether it is open, closed, locked, etc.).  A
+listing for the 'state-number' values is provided at the end of the
+#RESETS helps section.
+ 
+ 
+R  <unused> <room-vnum> <last_door-number>
+ 
+For the 'R' command, there are only three values, and the first
+value is always 0 as it is unused.  The second number is the vnum
+of a room.  The third number is a last_door-number.  When this
+command is used, the doors from 0 to the indicated 'last_door-
+number' are shuffled.  The room will still have the same exits
+leading to the same other rooms as before, the DIRECTIONS will be
+different at each reboot.  Thus, a last_door-number of 4 makes a
+two-dimensional maze room; a door number of 6 makes a three-
+dimensional maze room.
+ 
+Use of both the 'D' and 'R' commands on the same room will yield
+UNPREDICTABLE results, so take care how you utilize the 'R'
+command.
+ 
+Any line (except an 'S' line) may have a comment at the end.
+ 
+**NOTES:
+IMPORTANT!: End the #RESETS section in your area with an 'S' on the
+line after the last reset command.
+ 
+For the 'P' command, the actual container used is the MOST RECENTLY
+loaded object with the right vnum; for best results, there should
+be only one such container in the world.  The object to put in a 
+container is not loaded if no container object exists, or if someone is 
+carrying it, or if it already contains on of the to-be-loaded objects.
+ 
+Remember, for all LIMIT-NUMBERS, a '-1' means an infinite number of
+the objects, mobiles, etc. can exist in the world, and the game
+will keep loading up these objects/mobiles.  Keep this in mind, if
+you are thinking of using a '-1' for a limit-number.
+ 
+For the 'E' and 'G' command, if the most recent 'M' command
+succeeded (e.g. the mobile limit wasn't exceeded), the object is
+given to that mobile.  If the most recent 'M' command FAILED (due
+to hitting mobile limit), then the object is not loaded.
+ 
+Also remember, EACH MOBILE in your area (not just each type) must
+be loaded with the 'M' command.  For example, if you have 20
+cityguards total wandering about your town, you must do 20 reset
+lines of the 'M' command; for cityguard 1, cityguard 2, cityguard
+3, etc., through cityguard 20.  You can see how writing the #RESETS
+section of your area can rapidly become tiresome, but try to take
+extra care with this section, as it is easy to make a small typo,
+and these are a pain to debug if you end up with numerous reset
+errors!
+ 
+IMPORTANT!!:  For the 'D' command: ROOM EXITS MUST BE COHERENT!  If
+room 1 had an exit East going to room 2, and room 2 has an exit in
+the reverse direction (West), that exit MUST GO BACK to room 1.
+This doesn't prevent one-way exits;  room 2 doesn't HAVE to have an
+exit in the reverse direction.
+ 
+ 
+EXAMPLE:
+The following is an example of several of the above reset commands
+as they appear in the area Midgaard.  Use these to see how #RESETS
+works (note: this example, while taken from the Midgaard.are file
+#RESETS section, it is not in the same order as in the actual file,
+as only a small part of that section is represented below, just to
+give you an idea of the various reset commands, and how they should
+appear):
+ 
+ 
+#RESETS
+*
+* -- northern Midgaard --   <--- Comments are useful in keeping
+*                                track of your reset commands.
+M  0  3011  1  3001      Hassan
+E  1  3005  1  16        wield scimitar
+*
+M  0  3060  12 3004           Cityguard 1
+E  1  3365  -1 0         equip banner
+E  1  3364  -1 1         equip signet ring
+*
+M  0  3060  12 3014           Cityguard 2
+E  1  3365  -1 0         equip banner
+E  1  3364  -1 1         equip signet ring
+*
+M  0  3064  3  3007      A Happy Drunk (at Inn)
+M  0  3065  2  3044      A Beggar in poor alley
+*
+M  0  3012  1  3054      Healer in temple altar
+*
+M  0  3100  1  3106      Maid in Park Cafe
+G  1  3100  -1                A cup of tea
+G  1  3101  -1                A cup of coffee
+G  1  3102  -1                A cup of water
+*
+O  0  3135  1  3141      load Fountain on Penny Lane
+O  0  3136  1  3141      load 20 coins on Penny Lane
+*
+O  0  3130  1  3142      load the desk
+P  1  3123  1  3130           put brass key in desk
+O  0  3131  1  3142      load the safe
+P  1  3132  1  3131           put money in safe
+*
+O  0  3010  1  3054      load Donation pit
+*
+D  0  3110  3  2         Lock Captain's door from outside
+D  0  3142  1  2         Lock Captain's door from inside
+D  0  3142  2  2         Lock jail from outside
+D  0  3143  0  2         Lock jail from inside
+*
+S  <---- REMEMBER: end the #RESETS section with an 'S'.
+ 
+ 
+=== Wear_loc Values for the 'E' reset command:
+ 
+WEAR_NONE      -1
+WEAR_LIGHT      0
+WEAR_FINGER_L   1
+WEAR_FINGER_R   2
+WEAR_NECK_1     3
+WEAR_NECK_2     4
+WEAR_BODY       5
+WEAR_HEAD       6
+WEAR_LEGS       7
+WEAR_FEET       8
+WEAR_HANDS      9
+WEAR_ARMS      10
+WEAR_SHIELD    11
+WEAR_ABOUT     12
+WEAR_WAIST     13
+WEAR_WRIST_L   14
+WEAR_WRIST_R   15
+WEAR_WIELD     16
+WEAR_HOLD      17
+MAX_WEAR       18
+ 
+ 
+ 
+VII.  The #SHOPS section: (optional; don't add if you have no shops)
+If you intend on having shops in your area, then you will need a
+#SHOPS section.  This section, in fact, is the easiest of all the
+sections in an area to do, and takes very little time.
+ 
+First, I'll provide an example from the midgaard.are area file of
+some of the shops from Midgaard's #SHOPS section:
+ 
+#SHOPS
+3000  2  3  4  10 0  105  15  0  23 ; The Wizard
+3001  0  0  0  0  0  110  100 0  23 ; The Baker
+3002  1  8  13 15 19 150  40  0  23 ; The Grocer
+3003  5  0  0  0  0  130  40  0  23 ; The Weaponsmith
+3004  9  0  0  0  0  100  50  0  23 ; The Armourer
+3006  22 0  0  0  0  120  90  6  22 ; The Captain
+ 
+The syntax of the #SHOPS is as follows:
+<mobile-vnum> <trade-0> <trade-1> <trade-2> <trade-3> <trade-4>
+<profit-buy> <profit-sell> <open-hour> <close-hour>
+ 
+The first value, the mobile-vnum, is the 'keeper', or the mobile
+who is the shopkeeper.  ALL MOBILES with that vnum will be
+shopkeepers.
+ 
+The trade-0 through trade-4 are item types which the shopkeeper
+will buy.  Unused slots should have a '0' in them'; for instance,
+a shopkeeper who doesn't buy anything would have five zeroes.  The
+item types are the same values from the #OBJECTS section, in the
+ITEM TYPE table.  I am providing this table again, for this
+purpose, at the end of this #SHOPS help section.
+ 
+The 'profit-buy' number is a markup for players buying the item, in
+percentage points.  100 is nominal price;  150 is 50% markup, and
+so on.  The 'profit-sell' number is a markdown for players selling
+the item, in percentage points.  100 is nominal price, 75 is 25%
+markdown, and so on.  The buying markup should be at least 100,
+generally greater, and the selling markdown should be no more than
+100, generally lower.
+ 
+The 'open-hour' and 'close-hour' numbers define the hours when the
+shopkeeper will do business.  For a 24-hour shop, these numbers
+would be 0 and 23.
+ 
+Everything beyond 'close-hour' to the end of the line is taken to
+be a comment.
+ 
+Note that there is no room number for a shop.  Just load the
+shopkeeper mobile in to the room of your choice, via that #RESETS
+section, and make the mobile a sentinel in the ACT-FLAGS section of
+the mobile in #MOBILES.  Or, for a wandering shopkeeper, just make
+it non-sentinel.
+ 
+The objects the shopkeeper sells are exactly those loaded by the
+'G' reset command in #RESETS for that shopkeeper.  These items
+replenish automatically.  If a player sells an object to a
+shopkeeper, the shopkeeper will keep it for resale if he, she, or
+it doesn't already have an identical object.  The items a player
+sells to a shopkeeper, however, do not replenish.
+ 
+**IMPORTANT!!:  You end your #SHOPS section with a '0' on the line
+after the last shop.
+ 
+ 
+=== OBJECT TYPES (items a shopkeeper will buy from player):
+ 
+ITEM_LIGHT           1
+ITEM_SCROLL          2
+ITEM_WAND            3
+ITEM_STAFF           4
+ITEM_WEAPON          5
+ITEM_TREASURE        8
+ITEM_ARMOR           9
+ITEM_POTION         10
+ITEM_CLOTHING       11
+ITEM_FURNITURE      12
+ITEM_TRASH          13
+ITEM_CONTAINER      15
+ITEM_DRINK_CON      17
+ITEM_KEY            18
+ITEM_FOOD           19
+ITEM_MONEY          20
+ITEM_BOAT           22
+ITEM_CORPSE_NPC     23
+ITEM_PILL           26
+ITEM_MAP            28
+ITEM_SINGING        29
+ITEM_PORTAL	    30
+ITEM_EXPLOSIVE	    31
+ 
+**note:  In general, when designing a mobile as a shopkeeper in the
+#MOBILES section, you should make him/her IMMUNE to all forms of
+attack by having the mobile immune to magic, disease, poison, and
+weapons using the IMM_BITS in the immunities section of the mob in
+#MOBILES.  Also, it is generally a good idea to make these mobiles
+NOPURGE by having an 'ACT_FLAG' of ACT_NOPURGE for the mobile in
+the #MOBILES section.  After all, you don't want your players
+killing the shopkeepers, or a purge-happy immortal accidentally
+purging the shopkeeper with a purge command.
+ 
+ 
+VIII.  The #SPECIALS section: (optional, don't add if none of your 
+                               mobiles have specials)
+ 
+Like the #RESETS section, the #SPECIALS section has one command per
+line.
+ 
+This section defines special functions for mobiles.
+Note: many special functions, such as those that make the mobiles cast
+spells also make the monster much harder to fight.  Keep this in mind 
+and if you add a hard special to a monster, make the monster itself a bit 
+wussier hitpoint and/or hit or dam or AC wise.
+ 
+Example of #SPECIALS, as found in midgaard.are area file:
+ 
+#SPECIALS
+M  3000  spec_cast_mage
+M  3005  spec_thief
+M  3011  spec_executioner
+M  3012  spec_cast_adept 
+M  3060  spec_guard
+M  3061  spec_janitor
+M  3062  spec_fido
+M  3143  spec_mayor
+ 
+Explanation:
+#SPECIALS           <--- this begins the #SPECIALS section
+M  3000  spec_cast_mage    <--- Midgaard's wizard
+M  3005  spec_thief        <--- the thief
+M  3011  spec_executioner  <--- Hassan
+M  3012  spec_cast_adept   <--- the Healer
+M  3060  spec_guard        <--- cityguard
+M  3061  spec_janitor      <--- the janitor
+M  3062  spec_fido         <--- the fido
+M  3143  spec_mayor        <--- Midgaard's Mayor
+
+The syntax is simple, and is as follows:
+M  <mobile-vnum>  <spec-fun>
+The mobile vnum is the vnum of the mobile with that particular
+special function.
+ 
+=== List of SPEC-FUN's found in the ROM2 code:
+ 
+spec_breath_any
+spec_breath_acid
+spec_breath_fire
+spec_breath_frost
+spec_breath_gas
+spec_breath_lightning
+ 
+spec_cast_adept
+spec_cast_cleric
+spec_cast_judge
+spec_cast_mage
+spec_cast_undead
+ 
+spec_executioner
+spec_fido          
+spec_guard
+spec_janitor
+spec_mayor           
+spec_poison
+spec_thief
+spec_puff
+spec_wolf
+spec_batmad
+spec_smart
+ 
+The spec_breath's are just that.  Breath weapons, such as found
+with most dragons, many of the gods in Olympus, etc.
+ 
+The spec_cast's give mobiles the abilities to cast spells,
+depending on which spec_cast you use.  To satisfy your own
+curiosity, I am including a listing of what each spec_cast type
+will cast, depending on the level of the mobile.
+ 
+spec_cast_adept spells:
+The spec_cast_adept mobile will cast the following spells at random
+on all characters in the same room, up to characters of level 10 or
+less (this may have been changed; but this was correct with the
+Rom2 code):
+     armor
+     bless
+     cure blindness
+     cure light
+     cure poison
+     refresh
+ 
+spec_cast_cleric spells:
+The spells cast depend on the level of the mobile with this special
+function.  (Thus, if you wish to have a cleric-spell casting mobile
+that can cast 'curse', make the mobile at least level 12).  The
+following can be cast by this spec-fun:
+     blindness      - min. lvl. 0
+     cause serious  - min. lvl. 3
+     earthquake     - min. lvl. 7
+     cause critical - min. lvl. 9
+     dispel evil    - min. lvl. 10
+     curse          - min. lvl. 12
+     change sex     - min. lvl. 12
+     flamestrike    - min. lvl. 13
+     harm           - min. lvl. 15
+     plague         - min. lvl. 15
+     dispel magic   - min. lvl. 16
+ 
+spec_cast_judge:
+This spec-fun is geared mainly for the Judge mobile in Megacity
+One.  The only spell cast by this spec-fun is 'high explosive'.
+ 
+spec_cast_mage:
+The spells cast depend on the level of the mobile with this special
+function.  The following can be cast by this spec-fun:
+     blindness      - min. lvl. 0
+     chill touch    - min. lvl. 3
+     weaken         - min. lvl. 7
+     teleport       - min. lvl. 8
+     colour spray   - min. lvl. 11
+     change sex     - min. lvl. 12
+     energy drain   - min. lvl. 13
+     fireball       - min. lvl. 15
+     plague         - min. lvl. 20
+     acid blast     - min. lvl. 20
+ 
+spec_cast_undead:
+The spells cast depend on the level of the mobile with this special
+function.  The following can be cast by this spec-fun:
+     curse          - min. lvl. 0
+     weaken         - min. lvl. 3
+     chill touch    - min. lvl. 6
+     blindness      - min. lvl. 9
+     poison         - min. lvl. 12
+     energy drain   - min. lvl. 15
+     harm           - min. lvl. 18
+     plague         - min. lvl. 20
+     teleport       - min. lvl. 21
+ 
+ 
+As far as the other spec-fun's go, here is a rough breakdown, just
+to give you and idea what each does:
+ 
+spec_fun_executioner:
+This spec-fun is more useful if you have player stealing and player
+killing capabilities in the mud.  The mobile with this special-
+function will attack any player, including an immortal, with a
+KILLER, or THIEF flag.  Additionally, this mobile can 'create'
+additional cityguards in the room to assist his fight against the
+player.
+ 
+spec_fun_puff:
+This amusing special function, written by Seth, of Rivers of Mud,
+does a number of very silly things, most of which you are probably
+familiar and therefore I won't go into detail.
+ 
+spec_fun_fido:
+This is a spec-fun customized for the fido mobiles of Midgaard.
+All it really does is cause the mobile to eat any corpse it may see
+lying in the room with it; players in the room will witness this in
+the form of "<mobile-name> savagely devours a corpse."
+ 
+spec_fun_guard:
+This special-function acts in some ways like the
+spec_fun_executioner.  It causes the mobile to attack characters
+automatically that have the KILLER or THIEF flags, if player
+stealing and player killing is allowed in the mud.  Also, the
+spec_fun_guard will intervene in a fight, assisting the 'most evil'
+of the fighters, alignment-wise.  This means that a good character
+fighting an evil mob will often be joined in his/her/it's fight by
+the spec_fun_guard mobile, and visa-versa for an evil character
+attacking good mobiles in the presence of a spec_fun_guard mobile.
+This assisting is always accompanied by the mobile yelling "PROTECT
+THE INNOCENT!!  BANZAI!!"
+ 
+spec_fun_janitor:
+This spec-fun causes the mobile to pick up "trash" (objects that
+are either ITEM_DRINK_CON, or ITEM_TRASH on the ground in the same
+room as the mobile).
+ 
+spec_fun_mayor:
+This is geared originally for the mayor of Midgaard.  It adds a bit
+of humor and personality to the charismatic mayor.  Basically, the
+mobile with this special function wanders around, making comments
+such as "Vandals!  Youngsters have no respect for anything!", and
+other statements, as well as going to sleep, waking up, touring
+Midgaard, and opening and closing the gates of Midgaard at various
+times.
+ 
+spec_poison:
+A mobile with the spec_fun_poison will, when fighting a player,
+'bite' the player, and thus poisoning him with a 'poison spell'.
+This is a good spec-fun to give to poison snakes, etc., or any
+other mobile that might have a poison bite.
+ 
+spec_fun_thief:
+This spec-fun causes the mobile to "steal" money from a player in
+the same room as the mobile.  The player also receives a "You
+discover <mobile-name>'s hand's in your wallet!" when this happens
+to the him/her/it.
+
+spec_wolf
+Any monster with this special lurks and prowls and howls to all in
+the area during the night hours.
+
+spec_batmad
+Any creature with this special will shrivel up and die if the daylight
+washes over it. 
+
+spec_smart
+This special gives the monster with it the abilities to spell himself up 
+with protection spells, and keep them fresh, as well as undo maladiction 
+spells cast at him AND then turn around and cast them back at his 
+attacker..he also has abilities that a monster with spec_cast_cleric
+would have...a *very* evil monster special, use it only for specially
+hard qwest mobs, temple or tribe room guardians, etc...
+- This very cool special by Amiga and Neuromancer.
+ 
+ 
+IX.  The #$ section:
+This section marks the end of the whole area file.
+
+The syntax of this section is:
+ 
+#$
+ 
+ 
+X. COMPILATION OF THE TABLES FOR AREA BUILDING:
+To make it simple to check values on all the multitude of tables
+for the various flags, etc. used in area building, I am listing
+again ALL the tables of values from ALL the different area
+sections, from #MOBILES to #SPECIALS:
+ 
+--------------------------
+     for #MOBILES:
+--------------------------
+=== ACT FLAGS:
+ 
+ACT_IS_NPC     (A)  <-- Auto set for mobs: do NOT use
+ACT_SENTINEL   (B)  <-- stays in one room
+ACT_SCAVENGER  (C)  <-- picks up objects
+ACT_AGGRESSIVE (F)  <-- attacks PC's
+ACT_STAY_AREA  (G)  <-- Won't leave area
+ 
+ACT_WIMPY      (H)  <-- will flee if hp gets too low
+ACT_PET        (I)  <-- Auto set for pets: do NOT use
+ACT_TRAIN      (J)  <-- can train PC's
+ACT_PRACTICE   (K)  <-- can practice PC's
+ACT_UNDEAD     (O)  n/a
+ 
+ACT_CLERIC     (Q)  n/a
+ACT_MAGE       (R)  n/a
+ACT_THIEF      (S)  n/a
+ACT_WARRIOR    (T)  n/a
+ACT_NOALIGN    (U)  n/a
+
+ACT_NOPURGE    (V)  <-- will not be purged by purge command
+ACT_IS_HEALER  (a) <-- acts as a healer
+ACT_GAIN       (b) <-- PC's can use 'gain' command at this mobile
+ACT_UPDATE_ALWAYS   (c)  (Don't use, see Etaine if you want info on this one)
+ 
+ 
+=== RACES:
+ 
+Here are some common races;  Race affects what parts the mobile 
+will have and some of the affected_by things it may have, just like 
+the races for players. 
+ 
+human
+dragon
+elf
+dwarf
+orc
+giant
+unique
+ 
+For other options, see Etaine.
+ 
+=== Mobile Size:
+ 
+T = tiny
+S = small
+M = medium
+L = large
+H = huge
+G = giant
+ 
+=== Affected_by FLAGS:
+If you flag a monster with any of these, it means he is AFFECTED by the flag
+permanently.  For example, if the monster is flagged aff_poison, he is 
+poisoned.  (it does NOT mean he can cast poison, rather HE is poisoned)
+ 
+AFF_BLIND           (A)   
+AFF_INVISIBLE       (B)   invisble to all players under his level
+AFF_DETECT_EVIL     (C)   
+AFF_DETECT_INVIS    (D)   monster can detect invisible players under his level
+AFF_DETECT_MAGIC    (E)  
+ 
+AFF_DETECT_HIDDEN   (F)  monster can detect hiding players under his level
+AFF_SANCTUARY       (H)  
+AFF_FAERIE_FIRE     (I)  
+AFF_INFRARED        (J)  monster can see players in dark rooms and/or at night
+AFF_CURSE           (K)  
+ 
+AFF_POISON          (M)  
+AFF_PROTECT         (N)  
+AFF_SNEAK           (P) 
+AFF_HIDE            (Q)  
+AFF_SLEEP           (R)  
+ 
+AFF_CHARM           (S)  
+AFF_FLYING          (T)
+AFF_PASS_DOOR       (U)
+AFF_HASTE           (V)
+AFF_CALM            (W)
+ 
+AFF_PLAGUE          (X)
+AFF_WEAKEN          (Y)
+AFF_DARK_VISION     (Z)   n/a
+AFF_BERSERK         (a)   
+AFF_SWIM            (b)
+AFF_REGENERATION    (c)
+
+
+=== OFF_BITS:
+These are the monsters OFFENSE flags..they determine which offense he 
+will use when he fights.  eg, if a monster is flagged off_backstab, he 
+will try to backstab when he fights. 
+
+OFF_AREA_ATTACK     (A)  monster attacks all in area
+OFF_BACKSTAB        (B)  must be carrying a weapon
+OFF_BASH            (C)
+OFF_BERSERK         (D)
+OFF_DISARM          (E)
+ 
+OFF_DODGE           (F)
+OFF_FADE            (G)
+OFF_FAST            (H)  n/a
+OFF_KICK            (I)
+OFF_KICK_DIRT       (J)
+ 
+OFF_PARRY           (K)
+OFF_RESCUE          (L)
+OFF_TAIL            (M)  n/a
+OFF_TRIP            (N)  n/a
+OFF_CRUSH           (O)  n/a
+ 
+ASSIST_ALL          (P)   he will assist any who was the victim of an attack
+ASSIST_ALIGN        (Q)   will assist those in a fight who are the same align
+                          as he is
+ASSIST_RACE         (R)   ditto, but same race as he is
+ASSIST_PLAYERS      (S)   will assist players who are fighting monsters
+ASSIST_GUARD        (T)   will assist cityguards
+ASSIST_VNUM         (U)   will assist all monsters of the same vnum as him
+ 
+ 
+=== IMMUNITIES - IMM bits for mobiles:
+These flags make the monster Immune to certain things. eg. if a monster 
+is flagged imm_acid, the acid blast spell cast against him will not hurt him.
+ 
+IMM_SUMMON     (A)
+IMM_CHARM      (B)
+IMM_MAGIC      (C)
+IMM_WEAPON     (D)
+IMM_BASH       (E)
+ 
+IMM_PIERCE     (F)
+IMM_SLASH      (G)
+IMM_FIRE       (H)
+IMM_COLD       (I)
+IMM_LIGHTNING  (J)  (chain lighting)
+ 
+IMM_ACID       (K)  (acid blast)
+IMM_POISON     (L)
+IMM_NEGATIVE   (M)  n/a
+IMM_HOLY       (N)  (holy light)
+IMM_ENERGY     (O)   n/a
+ 
+IMM_MENTAL     (P)   n/a
+IMM_DISEASE    (Q)   (immune to plague)
+IMM_DROWNING   (R)   n/a
+IMM_LIGHT      (S)   n/a
+IMM_BLIND      (T) 
+ 
+=== RESISTANCES - RES bits for mobiles:
+Thse flags make the monster resistant, but not totally immune to whatever 
+you flag him with...he can still be hurt by it, but not as easily as if 
+he was not flagged resistant to it.
+ 
+RES_CHARM      (B)
+RES_MAGIC      (C)
+RES_WEAPON     (D)
+RES_BASH       (E)
+RES_PIERCE     (F)
+ 
+RES_SLASH      (G)
+RES_FIRE       (H)
+RES_COLD       (I)
+RES_LIGHTNING  (J)  (chain lighting)
+RES_ACID       (K)
+ 
+RES_POISON     (L)
+RES_NEGATIVE   (M)  n/a
+RES_HOLY       (N)  (holy word)
+RES_ENERGY     (O)  n/a
+RES_MENTAL     (P)  n/a
+ 
+RES_DISEASE    (Q)
+RES_DROWNING   (R)  n/a
+RES_LIGHT      (S)
+ 
+=== VULNERABILITIES - VULN bits for mobiles:
+These flags make the monster vulnerable. eg if you flag a monster 
+vulnerable to bash, and a player bashes him, he will be hurt much more by 
+the bash then if he was not vulnerable to it. 
+
+VULN_MAGIC     (C)
+VULN_WEAPON    (D)
+VULN_BASH      (E)
+VULN_PIERCE    (F)
+VULN_SLASH     (G)
+ 
+VULN_FIRE      (H)
+VULN_COLD      (I)
+VULN_LIGHTNING (J)  (chain lighting)
+VULN_ACID      (K)  (acid blast)
+VULN_POISON    (L)
+ 
+VULN_NEGATIVE  (M)  n/a
+VULN_HOLY      (N)  (holy word)
+VULN_ENERGY    (O)  n/a
+VULN_MENTAL    (P)  n/a
+VULN_DISEASE   (Q)
+ 
+VULN_DROWNING  (R)  n/a
+VULN_LIGHT     (S)  n/a
+VULN_WOOD      (X)  (wooden weapons)
+VULN_SILVER    (Y)  (silver weapons)
+VULN_IRON      (Z)  (iron weapons)
+ 
+=== POSITIONS:
+ 
+POS_DEAD       0  <---* do not use
+POS_MORTAL     1  <---* do not use
+POS_INCAP      2  <---* do not use
+POS_STUNNED    3  <---* do not use
+ 
+POS_SLEEPING   4
+POS_RESTING    5
+POS_SITTING    6
+POS_FIGHTING   7  <---* this position also not used.
+POS_STANDING   8
+ 
+=== SEX of mobile:
+ 
+NEUTRAL   0
+MALE      1
+FEMALE    2
+ 
+=== DAMAGE TYPES (these values also used for weapons in #OBJECTS):
+These are the words you will see when the monster hits you...eg 'The big 
+monsters's WHIP annhilates you!' if you chose '4' for whip...etc
+ 
+0  - HIT
+1  - SLICE
+2  - STAB
+3  - SLASH
+4  - WHIP
+5  - CLAW
+ 
+6  - BLAST
+7  - POUND
+8  - CRUSH
+9  - GREP
+10 - BITE
+11 - PIERCE
+12 - SUCTION
+13 - BEATING
+14 - DIGESTION
+15 - CHARGE
+16 - SLAP
+17 - PUNCH
+18 - WRATH
+19 - MAGIC
+20 - DIVINE POWER
+21 - CLEAVE
+22 - SCRATCH
+23 - PECK (pierce)
+24 - PECK (bash)
+25 - CHOP
+26 - STING
+27 - SMASH
+28 - SHOCKING BITE
+29 - FLAMING BITE
+30 - FREEZING BITE
+31 - ACIDIC BITE
+32 - CHOMP
+ 
+
+--------------------------
+     for #OBJECTS
+--------------------------
+ 
+=== Common Materials for the 'material' section:
+ 
+- cloth
+- leather
+- pill
+- paper
+- vellum
+- glass
+- wood
+- steel
+- bronze
+- brass
+- iron
+- gold
+- silver
+- adamantite
+- stone
+ 
+=== OBJECT TYPES:
+ 
+ITEM_LIGHT           1
+ITEM_SCROLL          2
+ITEM_WAND            3
+ITEM_STAFF           4
+ITEM_WEAPON          5
+ITEM_TREASURE        8
+ITEM_ARMOR           9
+ITEM_POTION         10
+ITEM_CLOTHING       11 
+ITEM_FURNITURE      12
+ITEM_TRASH          13
+ITEM_CONTAINER      15
+ITEM_DRINK_CON      17  (drink container)
+ITEM_KEY            18
+ITEM_FOOD           19
+ITEM_MONEY          20
+ITEM_BOAT           22
+ITEM_CORPSE_NPC     23
+ITEM_FOUNTAIN       25
+ITEM_PILL           26
+ITEM_MAP            28
+ITEM_SINGING        29  (the jukebox crickets)
+ITEM_PORTAL         30
+ITEM_EXPLOSIVE	    31
+ 
+=== Object FLAGS:
+ 
+ITEM_GLOW           (A)
+ITEM_HUM            (B)
+ITEM_DARK           (C)  n/a
+ITEM_LOCK           (D)  n/a
+ITEM_EVIL           (E)  
+ITEM_INVIS          (F)
+ITEM_MAGIC          (G)  n/a
+ITEM_NODROP         (H)
+ITEM_BLESS          (I)
+ITEM_ANTI_GOOD      (J)
+ITEM_ANTI_EVIL      (K)
+ITEM_ANTI_NEUTRAL   (L)
+ITEM_NOREMOVE       (M)
+ITEM_INVENTORY      (N)
+ITEM_NOPURGE        (O)
+ITEM_ROT_DEATH      (P)  item will rot a few minutes after the mobile
+                         carrying is has died
+ITEM_VIS_DEATH      (Q)   while carried by a monster, the item is not visible
+                          by either locate spell or by the player looking at
+                          the monster, but becomes visible to locate spell
+                          and to look once the monster has died
+ITEM_MELT_DROP      (R)   item dissolved and dissapears when dropped
+ITEM_FLOAT          (S)   containers flagged with this will NOT sink and 
+                          dissapear in water rooms
+ 
+ 
+=== WEAR FLAGS:
+ 
+ITEM_TAKE           (A)  (all items you want to carry must have this flag)
+ITEM_WEAR_FINGER    (B)
+ITEM_WEAR_NECK      (C)
+ITEM_WEAR_BODY      (D)
+ITEM_WEAR_HEAD      (E)
+ITEM_WEAR_LEGS      (F)
+ITEM_WEAR_FEET      (G)
+ITEM_WEAR_HANDS     (H)
+ITEM_WEAR_ARMS      (I)
+ITEM_WEAR_SHIELD    (J)
+ITEM_WEAR_ABOUT     (K)  (worn about body)
+ITEM_WEAR_WAIST     (L)
+ITEM_WEAR_WRIST     (M)
+ITEM_WIELD          (N)
+ITEM_HOLD           (O)
+
+=== CONDITION OF OBJECT:
+
+PERFECT   P
+GOOD      G
+AVERAGE   A
+WORN      W
+DAMAGED   D
+RUINED    R 
+ 
+=== WEAPON CLASS:
+ 
+WEAPON_EXOTIC       0  (any player can use these)
+WEAPON_SWORD        1   (only players with sword skill can use)
+WEAPON_DAGGER       2    (only players with dagger skill can use..
+                          and the same for the rest)
+WEAPON_SPEAR        3
+WEAPON_MACE         4
+WEAPON_AXE          5
+WEAPON_FLAIL        6
+WEAPON_WHIP         7
+WEAPON_POLEARM      8
+ 
+ 
+=== WEAPON TYPES:
+ 
+WEAPON_FLAMING      (A)   n/a
+WEAPON_FROST        (B)   n/a
+WEAPON_VAMPIRIC     (C)   item has venom/poison on it
+WEAPON_SHARP        (D)
+WEAPON_VORPAL       (E)
+WEAPON_TWO_HANDS    (F)   need the weapon and the shield wear slot free 
+                          to use
+ 
+ 
+=== APPLY BONUS TYPES (for the 'A' section of #OBJECTS):
+ 
+APPLY_STRENGTH       1
+APPLY_DEX            2
+APPLY_INT            3
+APPLY_WIS            4
+APPLY_CON            5
+APPLY_SEX            6
+APPLY_CLASS          7   n/a
+APPLY_LEVEL          8   n/a
+APPLY_AGE            9   n/a
+APPLY_HEIGHT        10   n/a
+APPLY_WEIGHT        11   n/a
+APPLY_MANA          12
+APPLY_HIT           13
+APPLY_MOVE          14
+APPLY_GOLD          15
+APPLY_EXP           16   n/a
+APPLY_AC            17
+APPLY_HITROLL       18
+APPLY_DAMROLL       19
+APPLY_SAVING_PARA   20
+APPLY_SAVING_ROD    21
+APPLY_SAVING_PETRI  22
+APPLY_SAVING_BREATH 23
+APPLY_SAVING_SPELL  24
+ 
+ 
+=== Container FLAGS (if OBJECT TYPE is container only):
+ 
+CONT_CLOSEABLE      1
+CONT_PICKPROOF      2
+CONT_CLOSED         4
+CONT_LOCKED         8
+
+== Portal GATE FLAGS
+
+GATE_NORMAL_EXIT    A  enter/exit messages from portal are as if its a door
+GATE_NOCURSE        B  can enter portal even if cursed or in norecall room
+GATE_GOWITH         C   the portal goes with you
+GATE_BUGGY          D   small chance of sending you to a random room
+GATE_RANDOM         E   sends you to a random room on the mud
+GATE_RANDOMAREA     F   sends you to a random room in same area
+
+== PORTAL EXIT FLAGS
+
+EX_ISDOOR          A  when you enter portal it looks like you enter a door
+EX_CLOSED          B
+EX_LOCKED          C
+EX_PICKPROOF       F
+EX_NOPASS          G   passproof
+
+ 
+=== Liquid values for DRINK CONTAINERS (value2 on the value line):
+ 
+LIQ_WATER                 0
+LIQ_BEER                  1
+LIQ_RED_WINE              2
+LIQ_ALE                   3
+LIQ_DARK_ALE              4
+LIQ_WHISKEY               5
+LIQ_LEMONADE              6
+LIQ_FIREBREATHER          7
+LIQ_LOCAL_SPECIALTY       8
+LIQ_SLIME_MOLD_JUICE      9
+LIQ_MILK                 10
+LIQ_TEA                  11
+LIQ_COFFEE               12
+LIQ_BLOOD                13
+LIQ_SALT_WATER           14
+LIQ_COLA                 15
+LIQ_ROOT_BEER            16
+LIQ_ELVISH_WINE          17
+LIQ_WHITE_WINE           18
+LIQ_CHAMPAGNE            19
+LIQ_MEAD                 20
+LIQ_ROSE_WINE            21
+LIQ_BENEDICTINE_WINE     22
+LIQ_VODKA                23
+LIQ_CRANBERRY_JUICE      24
+LIQ_ORANGE_JUICE         25
+LIQ_ABSINTHE             26
+LIQ_BRANDY               27
+LIQ_AQAVIT               28
+LIQ_SCHNAPPS             29
+LIQ_ICEWINE              30
+LIQ_AMONTILLADO          31
+LIQ_SHERRY               32
+LIQ_FRAMBOISE            33
+LIQ_RUM                  34
+LIQ_CORDIAL              35
+
+ *Cheers* to Satin, of Tesseract, who brewed up the last 20 liquid types,
+above.
+
+
+Value lines for all the various OBJECT TYPES follow:
+ 
+format -
+<value0>  <value1>  <value2>  <value3>  <value4>
+ 
+**note: if a value is shown to be 'unused', place a zero, '0', for
+that value.  DO NOT skip it or leave it blank.
+ 
+ITEM_PORTAL:
+   <to_room> <gate flags> <exit flags> <# of charges> <key vnum if locked>
+
+ITEM_LIGHT:
+<unused> <unused> <HOURS OF LGT. AVAILABLE  <unused> <unused>
+                       0=dead, 999=infinite 
+ 
+ITEM_EXPLOSIVE:
+<spell lvl> <sn1> <sn2> <sn3> <unused>
+
+ITEM_SCROLL:
+<spell lvl> <sn1> <sn2> <sn3> <unused>
+ 
+**note:  Potions, pills and scrolls can have up to 3 spells in them.  If you
+use only 1 or 2, put a zero for each of the unused values. Try to use all 
+3 slots though, it makes the pill more interesting :)
+ 
+**note: spell lvl is the level at which the spell will be cast, NOT
+the level of the reader of the scroll.
+ 
+**note: 'sn' stands for SLOT NUMBER; this is the spell number; please 
+get a copy of spell.txt at:
+http://www.interlog.com/~sofa/text/docs/doc.html to find out what 
+number to use to indicate each spell.
+
+ITEM_WAND:
+<spell lvl> <maximum charges> <current charges> <sn> <unused>
+ 
+ITEM_STAFF:
+<spell lvl> <max charges> <current charges> <sn> <unused>
+ 
+ITEM_WEAPON:
+<weapon class> <# damage dice> <type of damage dice> <damage type>
+<weapon types>
+
+- note: to figure out how to deal with the #damage dice and type of 
+damage dice slots, please read :
+http://www.interlog.com/~sofa/text/docs/objstats.doc
+ 
+ITEM_TREASURE:
+<unused> <unused> <unused> <unused> <unused>
+ 
+ITEM_ARMOR:
+<value for pierce> <value for bash> <value for slash> <value for
+magic> <unused>
+ 
+ITEM_POTION:
+<spell lvl> <sn1> <sn2> <sn3> <unused> 
+ 
+**note:  Potions, pills and scrolls can have up to 3 spells in them.  If you
+use only 1 or 2, put a zero for each of the unused values. Try to use all 
+3 slots though, it makes the pill more interesting :)
+ 
+ITEM_PILL:
+<spell lvl> <sn1> <sn2> <sn3> <unused>
+ 
+**note:  Potions and pills can have up to 3 spells in them.  If you
+use only 1 or 2, put a zero for each of the unused values.
+ 
+ITEM_FURNITURE:
+<unused> <unused> <unused> <unused> <unused>
+ 
+**note: the benches in Southern Midgaard are an example of a
+furniture object... they basically just sit there.
+ 
+ITEM_TRASH:
+<unused> <unused> <unused> <unused> <unused>
+
+ITEM_SINGING  (jukebox/crickets)
+< -1 > < -1 > < -1 > < -1 > < -1 > 
+
+ITEM_CONTAINER:
+<wgt. capacity> <container FLAGS> <key vnum> <unused> <unused>
+ 
+**note: Use the Container FLAGS listed earlier for this value; the
+key vnum is ONLY USED if there is a key to unlock the container -
+otherwise put a zero for that value.
+ 
+ITEM_DRINK_CONTAINER:
+<liquid capacity> <current quantity> <liquid #> <0 <---note: if
+this value is a NON-ZERO number, the drink is poisoned> <unused>
+ 
+ITEM_KEY:
+<unused> <unused> <unused> <unused> <unused>
+ 
+ITEM_FOOD:
+<hours of food value> <unused> <unused> <unused> <unused>
+                         * note if this ^^^^^^^ value is 1, food is poison. 
+ITEM_MONEY:
+<value in gold> <unused> <unused> <unused> <unused>
+ 
+ITEM_BOAT:
+<unused> <unused> <unused> <unused> <unused>
+ 
+ITEM_FOUNTAIN:
+<unused> <unused> <liquid type> <unused> <unused>
+ 
+ITEM_MAP:
+< 1 > <unused> <unused> <unused> <unused>
+
+
+--------------------------
+     for #ROOMS
+--------------------------
+=== Direction Values for the 'D' section:
+ 
+NORTH     0
+EAST      1
+SOUTH     2
+WEST      3
+UP        4
+DOWN      5
+ 
+(eg D0 = a door or non door exit that allows you to go north)
+ 
+== Door state values for the 'D' section:
+ 
+Unhindered exit         0
+Door with no keyhole   -1
+Normal door             1  
+Pick-proof door         2
+Pass proof door         3
+Pick and passproof door 4
+
+note: a 'hidden' exit that doesn't show in when players type 'exit' is 
+made by flagging your exit to be a door or flag 1.
+ 
+=== ROOM-FLAGS:
+ 
+ROOM_DARK           (A)  (room is dark if you are not holding a light)
+ROOM_NO_SUMMIN      (B)   (can't summon anything into this room)
+ROOM_NO_MOB         (C)    (monsters won't wander in)
+ROOM_INDOORS        (D)     (room will be dark unless you carry light)
+ROOM_NO_SUMMOUT     (E)    (can't summon anything OUT of this room)
+ROOM_PRIVATE        (J)     (2 players or monsters only)
+ROOM_SAFE           (K)      (can't attack monsters in this room)
+ROOM_SOLITARY       (L)     (1 player or monster room)
+ROOM_PET_SHOP       (M)   
+ROOM_NO_RECALL      (N)
+ROOM_IMP_ONLY       (O)       (ya!)
+ROOM_GODS_ONLY      (P)
+ROOM_HEROES_ONLY    (Q)       (level 91+ can get in here only)
+ROOM_NEWBIES_ONLY   (R)
+ROOM_LAW            (S)       (no charming monsters here)
+ 
+ 
+=== SECTOR-TYPES:
+ 
+SECT_INSIDE          0       (in order 0 -> 5, cost more movement points)
+SECT_CITY            1
+SECT_FIELD           2
+SECT_FOREST          3
+SECT_HILLS           4
+SECT_MOUNTAIN        5
+SECT_WATER_SWIM      6        (you have to fly or have a boat to get past)
+SECT_WATER_NOSWIM    7         (its watery, but you can walk in it)
+SECT_AIR             9        (need to fly over this room)
+SECT_DESERT         10
+SECT_MAX            11    n/a
+ 
+--------------------------
+     for #RESETS
+--------------------------
+=== Wear_loc Values for the 'E' reset command:
+ 
+WEAR_NONE      -1
+WEAR_LIGHT      0
+WEAR_FINGER_L   1
+WEAR_FINGER_R   2
+WEAR_NECK_1     3
+WEAR_NECK_2     4
+WEAR_BODY       5
+WEAR_HEAD       6
+WEAR_LEGS       7
+WEAR_FEET       8
+WEAR_HANDS      9
+WEAR_ARMS      10
+WEAR_SHIELD    11
+WEAR_ABOUT     12
+WEAR_WAIST     13
+WEAR_WRIST_L   14
+WEAR_WRIST_R   15
+WEAR_WIELD     16
+WEAR_HOLD      17
+MAX_WEAR       18
+ 
+--------------------------
+     for #SHOPS
+--------------------------
+=== OBJECT TYPES (items a shopkeeper will buy from player):
+ 
+ITEM_LIGHT           1
+ITEM_SCROLL          2
+ITEM_WAND            3
+ITEM_STAFF           4
+ITEM_WEAPON          5
+ITEM_TREASURE        8
+ITEM_ARMOR           9
+ITEM_POTION         10
+ITEM_CLOTHING       11
+ITEM_FURNITURE      12
+ITEM_TRASH          13
+ITEM_CONTAINER      15
+ITEM_DRINK_CON      17
+ITEM_KEY            18
+ITEM_FOOD           19
+ITEM_MONEY          20
+ITEM_BOAT           22
+ITEM_CORPSE_NPC     23
+ITEM_PILL           26
+ITEM_MAP            28
+ITEM_SINGING        29
+ 
+--------------------------
+     for #SPECIALS
+--------------------------
+=== List of SPEC-FUN's found in the ROM2 code:
+ 
+spec_breath_any
+spec_breath_acid
+spec_breath_fire
+spec_breath_frost
+spec_breath_gas
+spec_breath_lightning
+ 
+spec_cast_adept
+spec_cast_cleric
+spec_cast_judge
+spec_cast_mage
+spec_cast_undead
+ 
+spec_executioner
+spec_fido
+spec_guard
+spec_janitor
+spec_mayor
+spec_poison
+spec_thief
+spec_puff
+spec_wolf
+spec_batmad 
+ 
+--------------------------------------------------------------
+This ends my area help file, and I hope that by thoroughly reading
+ALL the above information that you now feel confident in beginning
+your area building.
+ 
+FINAL HINT:
+For the end of this help section, I would like to part with some
+advice to aid you in your building interesting and fun areas for
+players to delve into and explore.  When writing the room
+descriptions, object descriptions, and mobile descriptions, MAKE
+THEM INTERESTING TO READ!  No one likes to see room after room
+AFTER ROOM of something like "You have entered a large chamber.  It
+is very dark in here.", or some such nonsense for your room
+descriptions.  Vary EACH room description and spice it up with some
+CREATIVITY.  After all, that is what you must enjoy, if you are
+considering building an area.  Try to use this combination of
+variety, intelligence, and imagination in the building of your
+area.  One of the greatest joys most players find while mudding is
+the exploration and discovery of new and interesting rooms, items,
+treasures, and monsters.  For those of you familiar with TSR's
+Dungeons & Dragons, or similar roleplaying games, this creative use
+of description and atmosphere should be well-known to you.
+Otherwise, consider looking over other areas YOU like before
+beginning your own, and see how that area was done.  But most of
+all, do not bore your players.
+ 
+Also, keep in mind what level your area is geared for, and the type
+of characters/players that it may be geared for as well.  For
+example, some areas may be constructed with fighter-types in mind,
+others maybe mainly for grouped characters, or magic-using
+characters (lots of weapon-resistant mobiles for example), or for
+people that like to explore and/or map out new areas, and even
+areas for characters that just like blood, slaughter, and 'kill
+kill kill!'.  So decide exactly WHAT type of area you are building,
+and follow through with it.  And most important, MAKE IT FUN and
+CHALLENGING for the players.  Despite what some may say, no one
+likes to be given tons of treasure, gold, and magic-items with
+little or no struggle.  Monty Hall areas grow quickly tiresome.  So
+endeavor to make a well-rounded, cleverly constructed area for all
+to enjoy.
+          - Ozymandias
+
