@@ -4,104 +4,129 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define ROWS 60
+#define WIDTH 25
+#define HEIGHT 25
+#define ROWS 7
 #define COL 200
 
-void main()
-{
-  int WIDTH=25;
-  int HEIGHT=25;
-  int VNUM_START=20001; /* must NOT be zero */
-  int VNUM_END=WIDTH*HEIGHT+(VNUM_START-1);
-  int vnum,n,e,s,w,line_pos;
-  int positions[ROWS] = {0, 1, 2, 3, 4, 5};
-  int positions2[ROWS] = {0, 1, 2, 3, 4, 5};
-  char name[ROWS][COL] = {"Forest", "Trees", "Woods", "Path", "Deep forest", "Deep woods", "A clearing"};
-  char desc[ROWS][COL] = {"Leafy green", "Woodsy and stuff", "Leaves everywhere", "Dirt track", "Quiet undergrowth", "Autumnal crap everywhere", "Babbling brook"};
-  char sect[ROWS][COL] = {"2", "3","4","5"};
-  char live[ROWS][COL] = {"9405","3011","2800","5333","5007","8906","8905"};
-  int i, num;
-  time_t t;
-   
-   /* Intializes random number generator */
-   srand((unsigned) time(&t));
+#define VNUM_START 20001
+#define VNUM_END (VNUM_START + WIDTH * HEIGHT - 1)
 
+#define NAME_COUNT 7
+#define SECT_COUNT 4
+#define LIVE_COUNT 6
 
-  FILE *fp1=fopen("mystery.1","w");
-  FILE *fp2=fopen("scratch.1","w");
+// Fragment arrays for dynamic room descriptions
+const char *location_fragments[] = {
+    "A dense canopy of leaves stretches overhead, filtering the light into delicate beams.",
+    "The path winds through tall, twisted trees that seem ancient beyond time.",
+    "A narrow clearing opens, revealing soft mosses carpeting the ground.",
+    "Massive oaks line the path, their branches tangled like an embrace.",
+    "The brook flows gently, meandering between large stones covered in slick moss.",
+    "A shadowy grove offers cool respite, hidden from the sun's reach.",
+    "Pine needles coat the forest floor, muffling your footsteps."
+};
 
-  printf("#*********************************#\n\r");
-  printf("# GENERATING %3d BY %3d AREA FILE #\n\r",WIDTH,HEIGHT );
-  printf("#*********************************#\n\r");
+const char *ambience_fragments[] = {
+    "The air smells faintly of pine and damp earth, evoking the scent of rain.",
+    "A cool breeze rustles the undergrowth, carrying with it distant bird calls.",
+    "The atmosphere is unusually still, as though the forest is holding its breath.",
+    "A sense of peace lingers here, as if this place has been untouched for centuries.",
+    "Sunlight dances through the canopy, creating fleeting patterns on the ground.",
+    "The shadows seem to shift slightly, playing tricks on your eyes.",
+    "The undergrowth is thick, making it hard to see what might be lurking nearby."
+};
 
-  fprintf(fp1,
-"\
-#AREA\n\r\
-mystery.are~\n\r\
-Name Mystery~\n\r\
-{1} Seamer       SFB~\n\r\
-%d %d\n\r\
-",
-    VNUM_START,
-    VNUM_END);
+const char *detail_fragments[] = {
+    "Bright mushrooms dot the base of nearby trees, glowing softly.",
+    "A stone cairn sits by the path, covered in ivy and moss.",
+    "A hollow tree lies to the side, filled with dried leaves and animal tracks.",
+    "The ground is strewn with autumn leaves, crunching underfoot with every step.",
+    "A small bird flits between branches, watching you curiously.",
+    "The remains of an old campsite are visible, with ash and embers still faintly warm.",
+    "A patch of wildflowers stands out in the gloom, adding a splash of color."
+};
 
-  
-  fprintf(fp1,"\n\n#OBJECTS\n#0\n");
-  fprintf(fp1,"\n\n#ROOMS\n");
+const char *sector_types[SECT_COUNT] = {"2", "3", "4", "5"};
+const char *live_ids[LIVE_COUNT] = {"9405", "3011", "2800", "5333", "5007", "8906"};
 
-  for ( vnum=VNUM_START ; vnum<=VNUM_END  ; vnum++)
-   { /* for every room */
+// Function prototypes
+void initialize_random();
+void generate_area(FILE *fp);
+void generate_random_description(char *buffer, size_t buffer_size);
 
-   n=vnum-WIDTH;
-   s=vnum+WIDTH;
-   e=vnum+1;
-   w=vnum-1;
+int main() {
+    printf(
+        "#*********************************#\n"
+        "# GENERATING %3d BY %3d AREA FILE #\n"
+        "#*********************************#\n", WIDTH, HEIGHT
+    );
 
-   /*where it is on the line 0 to (WIDTH-1)*/
- line_pos=(vnum-VNUM_START+1)%(WIDTH);
- if (line_pos==0) line_pos=WIDTH;
+    initialize_random();
 
-   /*north border*/
- if ( (vnum >= VNUM_START) && (vnum < VNUM_START+WIDTH) ) {   
-  n=(VNUM_END-WIDTH)+(line_pos);
-    //  printf("vnum %5d NORTH %5d   [line_pos %3d]\n",vnum,n,line_pos);
+    FILE *fp = fopen("mystery.are", "w");
+    if (!fp) {
+        perror("Error opening mystery.are");
+        return EXIT_FAILURE;
+    }
+
+    generate_area(fp);
+    fclose(fp);
+
+    printf("Area generation complete: mystery.are\n");
+    return EXIT_SUCCESS;
 }
 
-   /*south border*/
-if ( (vnum > VNUM_END-WIDTH) && (vnum <= VNUM_END) ) {
-  s=(VNUM_START)+(line_pos-1);
-    //  printf("vnum %5d SOUTH %5d   [line_pos %3d]\n",vnum,s,line_pos);
+void initialize_random() {
+    srand(time(NULL));  // Seed the random number generator
 }
 
-   /*east border*/
-if ( (vnum-VNUM_START+1)%(WIDTH)==0 ) {   
-  e=vnum-WIDTH+1;
- //     printf("vnum %5d EAST  %5d   [line_pos %3d]\n",vnum,e,line_pos);
+void generate_random_description(char *buffer, size_t buffer_size) {
+    snprintf(
+        buffer, buffer_size,
+        "%s %s %s",
+        location_fragments[rand() % ROWS],
+        ambience_fragments[rand() % ROWS],
+        detail_fragments[rand() % ROWS]
+    );
 }
 
-   /*west border*/
-if ( (vnum-VNUM_START+1)%(WIDTH)==1 ) {   
-  w=vnum+WIDTH-1;
-  //    printf("vnum %5d WEST  %5d   [line_pos %3d]\n",vnum,w,line_pos);
+void generate_area(FILE *fp) {
+    char description[COL];
+
+    // Write the area header
+    fprintf(fp, 
+        "#AREA\n"
+        "mystery.are~\n"
+        "Name Mystery~\n"
+        "{1} Seamer       SFB~\n"
+        "%d %d\n\n"
+        "#OBJECTS\n#0\n\n"
+        "#ROOMS\n", VNUM_START, VNUM_END
+    );
+
+    // Generate rooms with descriptions
+    for (int vnum = VNUM_START; vnum <= VNUM_END; vnum++) {
+        generate_random_description(description, sizeof(description));
+
+        int n = (vnum >= VNUM_START + WIDTH) ? vnum - WIDTH : -1;
+        int s = (vnum <= VNUM_END - WIDTH) ? vnum + WIDTH : -1;
+        int e = ((vnum - VNUM_START + 1) % WIDTH != 0) ? vnum + 1 : -1;
+        int w = ((vnum - VNUM_START) % WIDTH != 0) ? vnum - 1 : -1;
+
+        fprintf(fp, "#%d\n%s\n~\n0 SEB %s\n", 
+            vnum, description, sector_types[rand() % SECT_COUNT]
+        );
+
+        if (n != -1) fprintf(fp, "D0\n~\n~\n0 0 %d\n", n);
+        if (e != -1) fprintf(fp, "D1\n~\n~\n0 0 %d\n", e);
+        if (s != -1) fprintf(fp, "D2\n~\n~\n0 0 %d\n", s);
+        if (w != -1) fprintf(fp, "D3\n~\n~\n0 0 %d\n", w);
+
+        fprintf(fp, "S\n");
+        fprintf(fp, "M 0 %s 50 %d 10\n", live_ids[rand() % LIVE_COUNT], vnum);
+    }
+
+    // Write the remaining sections
+    fprintf(fp, "#0\n\n#RESETS\nS\n\n#MOBILES\n#0\n\n#SPECIALS\nS\n#$\n");
 }
-
-    fprintf(fp1,"#%d\n%s~\n%s\n~\n0 SEB %s\n",vnum,name[positions[rand() % 6]],desc[positions[rand() % 6]],sect[positions[rand() % 4]]); // vnum / room-flags / sector
-    fprintf(fp1,"D0\n~\n~\n0 0 %d\n",n);
-    fprintf(fp1,"D1\n~\n~\n0 0 %d\n",e);
-    fprintf(fp1,"D2\n~\n~\n0 0 %d\n",s);
-    fprintf(fp1,"D3\n~\n~\n0 0 %d\n",w);
-    fprintf(fp1,"S\n");   
-    fprintf(fp2,"M 0 %s 50 %d 10\n\r",live[positions2[rand() % 6]],vnum);
-    //M <unused> <mobile-vnum> <limit-number> <room-vnum>
-  }
-fprintf(fp1,"#0\n");
-fprintf(fp1,"\n#RESETS\n");
-fprintf(fp2,"S\n\n\n#MOBILES\n#0\n\n#SPECIALS\nS\n#$\n");
-fclose(fp1);
-fclose(fp2);
-
-printf("Now - run cat *.1 > mystery.are\n\r");
-
-return;
-}
- 
