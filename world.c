@@ -92,9 +92,12 @@ void generate_random_description(char *buffer, size_t buffer_size) {
 }
 
 void generate_area(FILE *fp) {
-    char description[COL];
+    write_area_header(fp);
+    generate_rooms(fp);
+    write_remaining_sections(fp);
+}
 
-    // Write the area header
+void write_area_header(FILE *fp) {
     fprintf(fp, 
         "#AREA\n"
         "mystery.are~\n"
@@ -104,29 +107,36 @@ void generate_area(FILE *fp) {
         "#OBJECTS\n#0\n\n"
         "#ROOMS\n", VNUM_START, VNUM_END
     );
+}
 
-    // Generate rooms with descriptions
+void generate_rooms(FILE *fp) {
+    char description[COL];
+
     for (int vnum = VNUM_START; vnum <= VNUM_END; vnum++) {
         generate_random_description(description, sizeof(description));
-
-        int n = (vnum >= VNUM_START + WIDTH) ? vnum - WIDTH : -1;
-        int s = (vnum <= VNUM_END - WIDTH) ? vnum + WIDTH : -1;
-        int e = ((vnum - VNUM_START + 1) % WIDTH != 0) ? vnum + 1 : -1;
-        int w = ((vnum - VNUM_START) % WIDTH != 0) ? vnum - 1 : -1;
-
-        fprintf(fp, "#%d\n%s\n~\n0 SEB %s\n", 
-            vnum, description, sector_types[rand() % SECT_COUNT]
-        );
-
-        if (n != -1) fprintf(fp, "D0\n~\n~\n0 0 %d\n", n);
-        if (e != -1) fprintf(fp, "D1\n~\n~\n0 0 %d\n", e);
-        if (s != -1) fprintf(fp, "D2\n~\n~\n0 0 %d\n", s);
-        if (w != -1) fprintf(fp, "D3\n~\n~\n0 0 %d\n", w);
-
-        fprintf(fp, "S\n");
-        fprintf(fp, "M 0 %s 50 %d 10\n", live_ids[rand() % LIVE_COUNT], vnum);
+        write_room(fp, vnum, description);
     }
+}
 
-    // Write the remaining sections
+void write_room(FILE *fp, int vnum, const char *description) {
+    int n = (vnum >= VNUM_START + WIDTH) ? vnum - WIDTH : -1;
+    int s = (vnum <= VNUM_END - WIDTH) ? vnum + WIDTH : -1;
+    int e = ((vnum - VNUM_START + 1) % WIDTH != 0) ? vnum + 1 : -1;
+    int w = ((vnum - VNUM_START) % WIDTH != 0) ? vnum - 1 : -1;
+
+    fprintf(fp, "#%d\n%s\n~\n0 SEB %s\n", 
+        vnum, description, sector_types[rand() % SECT_COUNT]
+    );
+
+    if (n != -1) fprintf(fp, "D0\n~\n~\n0 0 %d\n", n);
+    if (e != -1) fprintf(fp, "D1\n~\n~\n0 0 %d\n", e);
+    if (s != -1) fprintf(fp, "D2\n~\n~\n0 0 %d\n", s);
+    if (w != -1) fprintf(fp, "D3\n~\n~\n0 0 %d\n", w);
+
+    fprintf(fp, "S\n");
+    fprintf(fp, "M 0 %s 50 %d 10\n", live_ids[rand() % LIVE_COUNT], vnum);
+}
+
+void write_remaining_sections(FILE *fp) {
     fprintf(fp, "#0\n\n#RESETS\nS\n\n#MOBILES\n#0\n\n#SPECIALS\nS\n#$\n");
 }
